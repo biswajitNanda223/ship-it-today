@@ -7,6 +7,8 @@ An animated, interactive engineering world for learning high-level design, low-l
 - Interactive capacity lab with live traffic, replica, cache, utilization, and p95-latency predictions
 - REST, GraphQL, and WebSocket API dojo with animated request flow
 - GenAI backend studio covering AI gateways, RAG, streaming, tool execution, semantic caching, fallbacks, safety, evaluation, and cost controls
+- A 20-page visual academy with separate HLD case studies, LLD exercises, UML/DFD/ERD lessons, and REST API deep dives
+- Animated architecture players with play, pause, replay, highlighted stages, code examples, and chapter navigation
 - Scroll-triggered reveals, live architecture flows, and dependency-free performance graphs
 - Guided HLD, LLD, cloud, and data-engineering mission tracks
 - Production-minded Fastify API with validation, request IDs, structured errors, and tests
@@ -62,6 +64,7 @@ curl -X POST http://localhost:4000/api/v1/ai/inference \
 
 ```text
 app/                    Next.js UI, learning routes, and global motion system
+  learn/                Academy hubs and statically generated lesson pages
 apps/api/src/           Fastify application
   modules/              Feature-owned routes
   plugins/              Cross-cutting behavior

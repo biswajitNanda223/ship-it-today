@@ -3,6 +3,7 @@
 ## Product surfaces
 
 - `app/`: Next.js 16-compatible interactive learning experience, built with React and TypeScript.
+- `app/learn/[track]/[slug]`: statically generated academy lessons for HLD, LLD, APIs, and diagrams.
 - `apps/api/`: Fastify service organized by feature modules, plugins, and integration tests.
 - `docs/`: architecture decisions and production guidance.
 
@@ -31,6 +32,7 @@ Run stateless web and API containers in Kubernetes with horizontal pod autoscali
 - Interactive predictions are memoized and require no network round trip.
 - The API uses schema validation, structured logging, request IDs, versioned routes, and consistent errors.
 - Charts are CSS-rendered, so there is no large charting bundle on the critical path.
+- Academy diagrams use CSS transforms and opacity rather than a runtime diagram library, keeping all 20 lesson routes lightweight.
 - `prefers-reduced-motion` is honored for accessibility and lower-power devices.
 
 ## GenAI backend flow
