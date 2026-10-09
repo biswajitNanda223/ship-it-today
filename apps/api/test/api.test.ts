@@ -17,3 +17,5 @@ test("capacity simulator returns a prediction", async () => {
   assert.equal(response.json().data.status, "healthy");
   await app.close();
 });
+
+test("GenAI inference simulator returns routing metrics",async()=>{const app=buildApp();const response=await app.inject({method:"POST",url:"/api/v1/ai/inference",payload:{prompt:"Explain consistent hashing",model:"quality",useRag:true}});assert.equal(response.statusCode,200);assert.equal(response.json().data.retrievedChunks,4);assert.equal(response.json().data.route,"quality");await app.close()});

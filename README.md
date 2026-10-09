@@ -6,6 +6,8 @@ An animated, interactive engineering world for learning high-level design, low-l
 
 - Interactive capacity lab with live traffic, replica, cache, utilization, and p95-latency predictions
 - REST, GraphQL, and WebSocket API dojo with animated request flow
+- GenAI backend studio covering AI gateways, RAG, streaming, tool execution, semantic caching, fallbacks, safety, evaluation, and cost controls
+- Scroll-triggered reveals, live architecture flows, and dependency-free performance graphs
 - Guided HLD, LLD, cloud, and data-engineering mission tracks
 - Production-minded Fastify API with validation, request IDs, structured errors, and tests
 - Responsive UI, reduced-motion support, and GPU-friendly animation primitives
@@ -13,9 +15,9 @@ An animated, interactive engineering world for learning high-level design, low-l
 
 ## Stack
 
-- Web: Next.js-compatible Vinext, React 19, TypeScript, CSS
+- Web: Next.js 16, React 19, TypeScript, CSS
 - API: Fastify, TypeScript, `@fastify/cors`
-- Hosting: Cloudflare-compatible Sites output
+- Hosting: Vercel (web) with a standalone Fastify service ready for container hosting
 - Testing: Node test runner and Fastify injection
 
 ## Run locally
@@ -33,7 +35,7 @@ In a second terminal, start the learning API:
 npm run api:dev
 ```
 
-Web runs on the URL printed by Vinext; the API defaults to `http://localhost:4000`.
+Web runs at `http://localhost:3000`; the API defaults to `http://localhost:4000`.
 
 ## Quality checks
 
@@ -51,12 +53,15 @@ curl http://localhost:4000/api/v1/courses
 curl -X POST http://localhost:4000/api/v1/simulations/capacity \
   -H "content-type: application/json" \
   -d '{"requestsPerSecond":4200,"replicas":4,"cacheEnabled":true}'
+curl -X POST http://localhost:4000/api/v1/ai/inference \
+  -H "content-type: application/json" \
+  -d '{"prompt":"Design a global feed","model":"quality","useRag":true,"maxTokens":1200}'
 ```
 
 ## Repository structure
 
 ```text
-app/                    Next.js UI and global styles
+app/                    Next.js UI, learning routes, and global motion system
 apps/api/src/           Fastify application
   modules/              Feature-owned routes
   plugins/              Cross-cutting behavior

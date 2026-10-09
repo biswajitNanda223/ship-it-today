@@ -27,10 +27,21 @@ Run stateless web and API containers in Kubernetes with horizontal pod autoscali
 ## Performance choices
 
 - Motion uses `transform`, `opacity`, and CSS-only layers to avoid layout thrashing.
+- One passive scroll listener updates CSS variables inside `requestAnimationFrame`; section reveals use `IntersectionObserver`.
 - Interactive predictions are memoized and require no network round trip.
 - The API uses schema validation, structured logging, request IDs, versioned routes, and consistent errors.
 - Charts are CSS-rendered, so there is no large charting bundle on the critical path.
 - `prefers-reduced-motion` is honored for accessibility and lower-power devices.
+
+## GenAI backend flow
+
+```text
+Client -> API edge -> AI gateway -> safety -> context/RAG -> inference -> evaluation
+                         |                         |             |
+                         +-> cache/fallback        +-> vectors   +-> model provider
+```
+
+The Fastify `POST /api/v1/ai/inference` simulator validates the request contract and returns routing, retrieval, latency, cost, and safety metadata. A production implementation should stream through SSE, keep model providers behind an adapter, version prompts and evaluation datasets, allowlist tools, redact sensitive data, and apply per-tenant token and concurrency budgets.
 
 ## Scaling sequence
 
