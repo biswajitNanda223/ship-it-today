@@ -6,6 +6,7 @@ const geist = Geist({ variable: "--font-sans", subsets: ["latin"] });
 const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ship-it-today.vercel.app"),
   title: "Ship It Today — Learn System Design by Building",
   description: "An interactive engineering world for mastering HLD, LLD, APIs, databases, Docker, Kubernetes, Kafka, queues, and cloud architecture.",
   icons: { icon: "/favicon.svg" },
