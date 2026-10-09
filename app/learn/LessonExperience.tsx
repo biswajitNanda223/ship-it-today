@@ -4,12 +4,14 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { useEffect, useMemo, useState } from "react";
 import type { Lesson } from "./academy-data";
+import { JointArchitecture } from "./JointArchitecture";
 import { LearnNav } from "./LearnNav";
 
 const routeFor = (track: Lesson["track"], slug: string) =>
   `/learn/${track === "API" ? "apis" : track === "DIAGRAM" ? "diagrams" : track.toLowerCase()}/${slug}`;
 
 function ArchitectureDiagram({ lesson, frame }: { lesson: Lesson; frame: number }) {
+  if (lesson.nodes.length > 0) return <JointArchitecture nodes={lesson.nodes} kind={lesson.diagram} activeFrame={frame} />;
   if (lesson.diagram === "sequence") {
     return <div className="academy-sequence" aria-label={`${lesson.title} sequence diagram`}>
       <div className="sequence-actors">{lesson.nodes.map((node, index) => <div className={frame === index ? "active" : ""} key={node.name}><b>{node.name}</b><small>{node.detail}</small><i /></div>)}</div>

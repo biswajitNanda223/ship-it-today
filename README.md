@@ -7,7 +7,8 @@ An animated, interactive engineering world for learning high-level design, low-l
 - Interactive capacity lab with live traffic, replica, cache, utilization, and p95-latency predictions
 - REST, GraphQL, and WebSocket API dojo with animated request flow
 - GenAI backend studio covering AI gateways, RAG, streaming, tool execution, semantic caching, fallbacks, safety, evaluation, and cost controls
-- A 20-page visual academy with separate HLD case studies, LLD exercises, UML/DFD/ERD lessons, and REST API deep dives
+- A 26-page visual academy with separate HLD case studies, LLD exercises, UML/DFD/ERD lessons, REST API deep dives, and Netflix/Tinder/Zomato designs
+- Seven dedicated REST method playgrounds for GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS
 - Animated architecture players with play, pause, replay, highlighted stages, code examples, and chapter navigation
 - Scroll-triggered reveals, live architecture flows, and dependency-free performance graphs
 - Guided HLD, LLD, cloud, and data-engineering mission tracks
