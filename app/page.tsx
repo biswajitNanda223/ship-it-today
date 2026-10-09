@@ -40,6 +40,21 @@ const apiSamples: Record<string, { method: string; path: string; body: string; r
   SOCKET: { method: "WS", path: "/realtime", body: 'subscribe("deployment.events")', response: '{\n  "event": "deploy.ready",\n  "region": "ap-south-1",\n  "version": "v1.4.0"\n}', latency: 18 },
 };
 
+const apiCatalog = [
+  { id: "rest", name: "REST", badge: "HTTP", color: "#6c42ef", summary: "Resource-oriented APIs with predictable verbs, status codes, caching, and broad tooling.", verbs: ["GET", "POST", "PUT", "PATCH", "DELETE"], code: `fastify.get('/api/v1/users/:id', {\n  schema: { params: UserParams }\n}, async (request, reply) => {\n  const cached = await redis.get(request.params.id)\n  if (cached) return JSON.parse(cached)\n  return userService.findById(request.params.id)\n})`, optimize: ["Cursor pagination", "ETag + Cache-Control", "Sparse fieldsets", "Batch database reads"] },
+  { id: "graphql", name: "GraphQL", badge: "QUERY", color: "#e34d9c", summary: "A typed graph lets clients request exactly the fields they need through one endpoint.", verbs: ["QUERY", "MUTATION", "SUBSCRIPTION"], code: `type Query {\n  course(id: ID!): Course\n}\n\nquery CourseCard {\n  course(id: "hld-101") {\n    title progress instructor { name }\n  }\n}`, optimize: ["DataLoader batching", "Persisted queries", "Depth limits", "Field-level caching"] },
+  { id: "grpc", name: "gRPC", badge: "PROTO", color: "#19a884", summary: "Fast binary contracts and streaming for trusted service-to-service communication.", verbs: ["UNARY", "SERVER STREAM", "BIDI STREAM"], code: `service Inventory {\n  rpc Reserve(ReserveRequest)\n    returns (ReserveResponse);\n}\n\nmessage ReserveRequest {\n  string sku = 1;\n  int32 quantity = 2;\n}`, optimize: ["Reuse channels", "Set deadlines", "Stream large results", "Compress selectively"] },
+  { id: "realtime", name: "Realtime", badge: "EVENT", color: "#f4773b", summary: "WebSockets and SSE deliver live updates without repeated client polling.", verbs: ["WEBSOCKET", "SSE", "LONG POLL"], code: `app.get('/events', async (_, reply) => {\n  reply.raw.setHeader(\n    'Content-Type', 'text/event-stream'\n  )\n  broker.on('deploy.ready', event =>\n    reply.raw.write(\`data: \${JSON.stringify(event)}\\n\\n\`)\n  )\n})`, optimize: ["Heartbeat frames", "Backpressure", "Resume tokens", "Connection limits"] },
+  { id: "webhook", name: "Webhooks", badge: "PUSH", color: "#d99a10", summary: "Event callbacks connect external systems reliably with signatures and retries.", verbs: ["DELIVERY", "RETRY", "REPLAY"], code: `app.post('/webhooks/stripe', {\n  config: { rawBody: true }\n}, async (request, reply) => {\n  verifySignature(request)\n  await inbox.storeOnce(request.body.id)\n  await queue.publish(request.body)\n  return reply.code(202).send()\n})`, optimize: ["Verify signatures", "Return 2xx quickly", "Idempotency keys", "Exponential retry"] },
+];
+
+const patterns = [
+  { id: "strategy", name: "Strategy", kind: "BEHAVIORAL", problem: "Swap an algorithm without changing its caller.", code: `interface PricingStrategy {\n  calculate(minutes: number): number\n}\nclass WeekendPricing implements PricingStrategy {\n  calculate(minutes: number) { return minutes * 0.75 }\n}\nclass ParkingTicket {\n  constructor(private pricing: PricingStrategy) {}\n  total(minutes: number) { return this.pricing.calculate(minutes) }\n}` },
+  { id: "factory", name: "Factory", kind: "CREATIONAL", problem: "Centralize object creation behind a stable interface.", code: `class NotificationFactory {\n  static create(channel: Channel): Notifier {\n    if (channel === 'email') return new EmailNotifier()\n    if (channel === 'sms') return new SmsNotifier()\n    return new PushNotifier()\n  }\n}` },
+  { id: "observer", name: "Observer", kind: "BEHAVIORAL", problem: "Notify many consumers when domain state changes.", code: `class Order {\n  private listeners = new Set<OrderListener>()\n  subscribe(listener: OrderListener) { this.listeners.add(listener) }\n  ship() {\n    this.status = 'shipped'\n    this.listeners.forEach(l => l.onShipped(this))\n  }\n}` },
+  { id: "adapter", name: "Adapter", kind: "STRUCTURAL", problem: "Make an external interface fit your domain contract.", code: `class StripePaymentAdapter implements PaymentPort {\n  constructor(private stripe: Stripe) {}\n  async charge(money: Money) {\n    return this.stripe.paymentIntents.create({\n      amount: money.minorUnits, currency: money.currency\n    })\n  }\n}` },
+];
+
 export default function Home() {
   const [rps, setRps] = useState(4200);
   const [replicas, setReplicas] = useState(4);
@@ -53,7 +68,13 @@ export default function Home() {
   const [xp, setXp] = useState(1240);
   const [toast, setToast] = useState("");
   const [services, setServices] = useState(["gateway", "service", "database"]);
+  const [apiType, setApiType] = useState("rest");
+  const [pattern, setPattern] = useState("strategy");
+  const [requestStage, setRequestStage] = useState(0);
+  const [copied, setCopied] = useState(false);
   const sample = apiSamples[activeApi];
+  const selectedApi = apiCatalog.find(item => item.id === apiType) ?? apiCatalog[0];
+  const selectedPattern = patterns.find(item => item.id === pattern) ?? patterns[0];
 
   const metrics = useMemo(() => {
     const capacity = replicas * 1450 * (cache ? 2.3 : 1);
@@ -80,11 +101,23 @@ export default function Home() {
     window.setTimeout(() => setToast(""), 2800);
   }
 
+  function animateLifecycle() {
+    setRequestStage(1);
+    [2,3,4,5].forEach((stage, index) => window.setTimeout(() => setRequestStage(stage), (index + 1) * 520));
+    window.setTimeout(() => setRequestStage(0), 3200);
+  }
+
+  function copyExample() {
+    navigator.clipboard?.writeText(selectedApi.code);
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  }
+
   return (
     <main>
       <nav className="nav shell" aria-label="Primary navigation">
         <a className="brand" href="#top"><span className="brand-mark">S</span><span>ship<span className="dot">.</span>it<span className="dot">.</span>today</span></a>
-        <div className="nav-links"><a href="#learn">Learn</a><a href="#lab">Playground</a><a href="#roadmap">Roadmap</a></div>
+        <div className="nav-links"><a href="#learn">Learn</a><a href="#api-academy">APIs</a><a href="#patterns">Patterns</a><a href="#lab">Scale Lab</a></div>
         <div className="nav-actions"><span className="xp-pill">⚡ {xp.toLocaleString()} XP</span><a className="nav-cta" href="#learn">Start learning <span>↗</span></a></div>
       </nav>
 
@@ -118,6 +151,21 @@ export default function Home() {
           <button className="track-link" onClick={() => {setMission(track.id);setMissionStep(0)}}>Launch mission <span>↗</span></button>
         </article>)}</div>
       </section>
+
+      <section className="academy-section" id="api-academy"><div className="shell">
+        <div className="section-head"><div><span className="kicker">API ENGINEERING ACADEMY</span><h2>Every API style.<br/><em>One living lab.</em></h2></div><p>Learn when to use each protocol, build it with production-ready code, then trace and optimize the complete request lifecycle.</p></div>
+        <div className="api-catalog">{apiCatalog.map(item=><button key={item.id} className={apiType===item.id?"active":""} style={{"--api-color":item.color} as React.CSSProperties} onClick={()=>{setApiType(item.id);setCopied(false)}}><i>{item.badge}</i><b>{item.name}</b><span>{item.verbs.length} modes</span></button>)}</div>
+        <div className="api-masterclass" style={{"--api-color":selectedApi.color} as React.CSSProperties}>
+          <div className="api-lesson"><small>PROTOCOL / {selectedApi.badge}</small><h3>{selectedApi.name}</h3><p>{selectedApi.summary}</p><div className="verb-list">{selectedApi.verbs.map(verb=><span key={verb}>{verb}</span>)}</div><h4>Production optimization</h4><ul>{selectedApi.optimize.map(item=><li key={item}><i>✓</i>{item}</li>)}</ul></div>
+          <div className="code-player"><div className="code-top"><span><i/><i/><i/> TypeScript</span><button onClick={copyExample}>{copied?"Copied ✓":"Copy code"}</button></div><pre><code>{selectedApi.code}</code></pre><div className="code-foot"><span>Production pattern</span><b>Fastify + TypeScript</b></div></div>
+        </div>
+        <div className="lifecycle-lab"><div className="lifecycle-head"><div><small>LIVE REQUEST LIFECYCLE</small><b>Follow one request end to end</b></div><button onClick={animateLifecycle} disabled={requestStage>0}>{requestStage>0?"Tracing request…":"Run request →"}</button></div><div className="lifecycle-track">{["CLIENT","GATEWAY","VALIDATE","SERVICE","DATABASE"].map((label,index)=><div key={label} className={requestStage>index?"stage active":"stage"}><i>{index+1}</i><b>{label}</b><small>{["HTTP/2","JWT + LIMIT","SCHEMA","BUSINESS LOGIC","INDEX LOOKUP"][index]}</small>{index<4&&<span/>}</div>)}</div><div className="trace-console"><span className={requestStage>0?"trace-dot moving":"trace-dot"}/><code>{requestStage===0?"Ready to trace":requestStage===5?"200 OK · 34ms · cache HIT":`Processing stage ${requestStage} of 5…`}</code></div></div>
+      </div></section>
+
+      <section className="patterns-section" id="patterns"><div className="shell">
+        <div className="section-head light"><div><span className="kicker">LLD PATTERN LAB</span><h2>Model the code.<br/><em>Change the behavior.</em></h2></div><p>Explore proven object-oriented patterns, understand the problem each solves, and inspect concise TypeScript implementations.</p></div>
+        <div className="pattern-lab"><div className="pattern-menu">{patterns.map((item,index)=><button key={item.id} className={pattern===item.id?"active":""} onClick={()=>setPattern(item.id)}><span>0{index+1}</span><div><small>{item.kind}</small><b>{item.name}</b></div><i>→</i></button>)}</div><div className="pattern-stage" key={pattern}><div className="pattern-visual"><div className="pattern-ring one"/><div className="pattern-ring two"/><div className="pattern-core">{selectedPattern.name}<small>PATTERN</small></div><div className="satellite s-one">CONTEXT</div><div className="satellite s-two">INTERFACE</div><div className="satellite s-three">IMPLEMENTATION</div></div><div className="pattern-explain"><small>{selectedPattern.kind} PATTERN</small><h3>{selectedPattern.name}</h3><p>{selectedPattern.problem}</p><pre>{selectedPattern.code}</pre><div className="principle"><b>SOLID CONNECTION</b><span>Open for extension, closed for modification.</span></div></div></div></div>
+      </div></section>
 
       <section className="builder-section"><div className="shell">
         <div className="section-head light"><div><span className="kicker">ARCHITECTURE BUILDER</span><h2>Compose the stack.<br/><em>Watch traffic move.</em></h2></div><p>Enable and remove components. The topology, request path, and reliability score update as you design.</p></div>
