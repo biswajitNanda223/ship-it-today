@@ -7,7 +7,9 @@ An animated, interactive engineering world for learning high-level design, low-l
 - Interactive capacity lab with live traffic, replica, cache, utilization, and p95-latency predictions
 - REST, GraphQL, and WebSocket API dojo with animated request flow
 - GenAI backend studio covering AI gateways, RAG, streaming, tool execution, semantic caching, fallbacks, safety, evaluation, and cost controls
-- A 26-page visual academy with separate HLD case studies, LLD exercises, UML/DFD/ERD lessons, REST API deep dives, and Netflix/Tinder/Zomato designs
+- A 38-page visual academy with separate HLD case studies, LLD exercises, UML/DFD/ERD lessons, REST API deep dives, and Netflix/Tinder/Zomato designs
+- A 69-endpoint public API world covering public data, auth, ecommerce, todos, social, media uploads, and kitchen-sink HTTP behavior
+- Twelve original data-intensive systems chapters covering storage engines, replication, partitioning, transactions, consensus, batch, and streams
 - Seven dedicated REST method playgrounds for GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS
 - Animated architecture players with play, pause, replay, highlighted stages, code examples, and chapter navigation
 - Scroll-triggered reveals, live architecture flows, and dependency-free performance graphs
@@ -19,7 +21,8 @@ An animated, interactive engineering world for learning high-level design, low-l
 ## Stack
 
 - Web: Next.js 16, React 19, TypeScript, CSS
-- API: Fastify, TypeScript, `@fastify/cors`
+- APIs: Fastify + TypeScript and FastAPI + Python
+- Uploads: streaming multipart handling with type and size limits
 - Hosting: Vercel (web) with a standalone Fastify service ready for container hosting
 - Testing: Node test runner and Fastify injection
 
@@ -40,6 +43,16 @@ npm run api:dev
 
 Web runs at `http://localhost:3000`; the API defaults to `http://localhost:4000`.
 
+The equivalent FastAPI learning service lives in `apps/fastapi`:
+
+```bash
+cd apps/fastapi
+python -m venv .venv
+# Activate the virtual environment, then:
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
 ## Quality checks
 
 ```bash
@@ -59,6 +72,11 @@ curl -X POST http://localhost:4000/api/v1/simulations/capacity \
 curl -X POST http://localhost:4000/api/v1/ai/inference \
   -H "content-type: application/json" \
   -d '{"prompt":"Design a global feed","model":"quality","useRag":true,"maxTokens":1200}'
+curl -X POST http://localhost:4000/api/v1/public-lab/execute \
+  -H "content-type: application/json" \
+  -d '{"method":"POST","path":"/api/v1/todos","body":{"title":"Ship it"}}'
+curl -X POST http://localhost:4000/api/v1/public-lab/images \
+  -F "image=@./example.png"
 ```
 
 ## Repository structure
@@ -70,6 +88,7 @@ apps/api/src/           Fastify application
   modules/              Feature-owned routes
   plugins/              Cross-cutting behavior
 apps/api/test/          API integration tests
+apps/fastapi/           Equivalent FastAPI learning service
 docs/                   Architecture and operational guidance
 public/                 Static assets
 ```

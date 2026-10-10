@@ -19,3 +19,11 @@ test("capacity simulator returns a prediction", async () => {
 });
 
 test("GenAI inference simulator returns routing metrics",async()=>{const app=buildApp();const response=await app.inject({method:"POST",url:"/api/v1/ai/inference",payload:{prompt:"Explain consistent hashing",model:"quality",useRag:true}});assert.equal(response.statusCode,200);assert.equal(response.json().data.retrievedChunks,4);assert.equal(response.json().data.route,"quality");await app.close()});
+
+test("public API lab executes a typed request simulation", async () => {
+  const app = buildApp();
+  const response = await app.inject({ method: "POST", url: "/api/v1/public-lab/execute", payload: { method: "PATCH", path: "/todos/todo_42", payload: { completed: true } } });
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.json().data.processedBy, "fastify");
+  await app.close();
+});

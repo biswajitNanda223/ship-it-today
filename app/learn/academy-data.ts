@@ -2,7 +2,7 @@ export type DiagramKind = "flow" | "class" | "sequence" | "data" | "state";
 
 export type Lesson = {
   slug: string;
-  track: "HLD" | "LLD" | "API" | "DIAGRAM";
+  track: "HLD" | "LLD" | "API" | "DIAGRAM" | "DDIA";
   index: string;
   title: string;
   subtitle: string;

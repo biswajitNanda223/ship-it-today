@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { LearnNav } from "./LearnNav";
 import { apiLessons, diagramLessons, hldLessons, lldLessons } from "./academy-data";
+import { ddiaLessons } from "./ddia-data";
 
 const academyTracks = [
   { code:"01", title:"High-level design", href:"/learn/hld", copy:"Architecture case studies from requirements to rollout.", lessons:hldLessons, color:"purple" },
   { code:"02", title:"Low-level design", href:"/learn/lld", copy:"UML, SOLID, patterns, and production object modeling.", lessons:lldLessons, color:"cyan" },
   { code:"03", title:"Diagram studio", href:"/learn/diagrams", copy:"Class, sequence, DFD, ERD, and state diagrams.", lessons:diagramLessons, color:"orange" },
   { code:"04", title:"REST API engineering", href:"/learn/apis", copy:"Every method, security, performance, webhooks, and testing.", lessons:apiLessons, color:"pink" },
+  { code:"05", title:"Data-intensive systems", href:"/learn/ddia", copy:"Twelve visual chapters on storage, replication, transactions, streams, and consensus.", lessons:ddiaLessons, color:"purple" },
 ];
 
 export default function AcademyPage() {
