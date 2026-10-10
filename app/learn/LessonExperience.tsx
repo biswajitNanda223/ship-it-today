@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { CSSProperties } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import type { Lesson } from "./academy-data";
 import { JointArchitecture } from "./JointArchitecture";
 import { LearnNav } from "./LearnNav";
@@ -10,59 +9,17 @@ import { LearnNav } from "./LearnNav";
 const routeFor = (track: Lesson["track"], slug: string) =>
   `/learn/${track === "API" ? "apis" : track === "DIAGRAM" ? "diagrams" : track.toLowerCase()}/${slug}`;
 
-function ArchitectureDiagram({ lesson, frame }: { lesson: Lesson; frame: number }) {
-  if (lesson.nodes.length > 0) return <JointArchitecture nodes={lesson.nodes} kind={lesson.diagram} activeFrame={frame} />;
-  if (lesson.diagram === "sequence") {
-    return <div className="academy-sequence" aria-label={`${lesson.title} sequence diagram`}>
-      <div className="sequence-actors">{lesson.nodes.map((node, index) => <div className={frame === index ? "active" : ""} key={node.name}><b>{node.name}</b><small>{node.detail}</small><i /></div>)}</div>
-      <div className="sequence-messages">{lesson.nodes.slice(0, -1).map((node, index) => <div className={frame >= index ? "sent" : ""} key={node.name} style={{ marginLeft: `${index * 13}%`, width: `${72 - index * 4}%` }}><span>{index % 2 ? "response" : "request"} {index + 1}</span><i>→</i></div>)}</div>
-    </div>;
-  }
-
-  if (lesson.diagram === "class") {
-    return <div className="academy-class" aria-label={`${lesson.title} class diagram`}>
-      {lesson.nodes.map((node, index) => <div className={frame === index ? "active" : ""} key={node.name}><b>{node.name}</b><pre>{node.detail}</pre>{index < lesson.nodes.length - 1 && <i>{index % 2 ? "implements" : "uses"} →</i>}</div>)}
-    </div>;
-  }
-
-  if (lesson.diagram === "data") {
-    return <div className="academy-dataflow" aria-label={`${lesson.title} data flow diagram`}>
-      <div className="dataflow-grid" />
-      {lesson.nodes.map((node, index) => <div className={`df-node df-${index} ${frame === index ? "active" : ""}`} key={node.name}><small>{index % 3 === 0 ? "ENTITY" : index % 3 === 1 ? "PROCESS" : "DATA STORE"}</small><b>{node.name}</b><span>{node.detail}</span></div>)}
-      <div className="dataflow-route"><i /><i /><i /></div>
-    </div>;
-  }
-
-  return <div className={`academy-flow ${lesson.diagram}`} aria-label={`${lesson.title} ${lesson.diagram} diagram`}>
-    {lesson.nodes.map((node, index) => <div className={frame === index ? "active" : ""} key={node.name}><span>{String(index + 1).padStart(2, "0")}</span><b>{node.name}</b><small>{node.detail}</small>{index < lesson.nodes.length - 1 && <i>→</i>}</div>)}
-    <div className="flow-packet" style={{ "--frame": frame } as CSSProperties} />
-  </div>;
+function ArchitectureDiagram({ lesson }: { lesson: Lesson }) {
+  return <JointArchitecture nodes={lesson.nodes} kind={lesson.diagram} />;
 }
 
 export function LessonExperience({ lesson, siblings }: { lesson: Lesson; siblings: Lesson[] }) {
   const [chapter, setChapter] = useState(0);
-  const [frame, setFrame] = useState(0);
-  const [playing, setPlaying] = useState(false);
   const active = lesson.steps[chapter];
   const currentIndex = siblings.findIndex(item => item.slug === lesson.slug);
   const previous = siblings[currentIndex - 1];
   const next = siblings[currentIndex + 1];
-  const progress = useMemo(() => ((chapter + 1) / lesson.steps.length) * 100, [chapter, lesson.steps.length]);
-
-  useEffect(() => {
-    if (!playing) return;
-    if (frame >= lesson.nodes.length - 1) {
-      const stop = window.setTimeout(() => setPlaying(false), 700);
-      return () => window.clearTimeout(stop);
-    }
-    const timer = window.setTimeout(() => setFrame(value => value + 1), 800);
-    return () => window.clearTimeout(timer);
-  }, [frame, playing, lesson.nodes.length]);
-
-  function play() {
-    setFrame(0);
-    setPlaying(true);
-  }
+  const progress = ((chapter + 1) / lesson.steps.length) * 100;
 
   return <main className="course-page academy-lesson">
     <LearnNav />
@@ -72,10 +29,8 @@ export function LessonExperience({ lesson, siblings }: { lesson: Lesson; sibling
     </header>
 
     <section className="lesson-player shell">
-      <div className="player-topbar"><div><i /><b>ANIMATED ARCHITECTURE WALKTHROUGH</b></div><span>FRAME {frame + 1} / {lesson.nodes.length}</span></div>
-      <ArchitectureDiagram lesson={lesson} frame={frame} />
-      <div className="player-controls"><button onClick={playing ? () => setPlaying(false) : play} aria-label={playing ? "Pause diagram animation" : "Play diagram animation"}>{playing ? "Ⅱ" : "▶"}</button><div><i style={{ width: `${((frame + 1) / lesson.nodes.length) * 100}%` }} /></div><span>{playing ? "PLAYING" : frame === lesson.nodes.length - 1 ? "COMPLETE" : "READY"}</span><button onClick={() => { setFrame(0); setPlaying(false); }}>↺ RESTART</button></div>
-      <footer><b>{lesson.nodes[frame].name}</b><span>{lesson.nodes[frame].detail}</span></footer>
+      <div className="player-topbar"><div><i /><b>JOINTJS ARCHITECTURE DIAGRAM</b></div><span>{lesson.nodes.length} COMPONENTS · ALWAYS VISIBLE</span></div>
+      <ArchitectureDiagram lesson={lesson} />
     </section>
 
     <section className="lesson-body shell">
