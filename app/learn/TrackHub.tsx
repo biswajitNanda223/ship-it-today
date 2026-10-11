@@ -47,6 +47,25 @@ export function TrackHub({
           </b>
         </div>
       </header>
+      <section className="track-path shell" aria-label="Learning path">
+        <div>
+          <span>01 · MODEL</span>
+          <b>Build the mental model</b>
+          <p>Start with boundaries, responsibilities, and the request path.</p>
+        </div>
+        <i aria-hidden="true">→</i>
+        <div>
+          <span>02 · DECIDE</span>
+          <b>Expose the trade-offs</b>
+          <p>Compare failure modes, consistency, latency, and operational cost.</p>
+        </div>
+        <i aria-hidden="true">→</i>
+        <div>
+          <span>03 · SHIP</span>
+          <b>Turn it into a design</b>
+          <p>Leave with an explainable diagram, contract, and rollout plan.</p>
+        </div>
+      </section>
       <section className="lesson-grid shell">
         {lessons.map((item, index) => (
           <Link href={routeFor(item)} key={item.slug} className="lesson-card">
@@ -70,6 +89,14 @@ export function TrackHub({
               </small>
               <h2>{item.title}</h2>
               <p>{item.description}</p>
+              <ul className="lesson-card-map">
+                {item.steps.slice(0, 3).map((step, stepIndex) => (
+                  <li key={step.title}>
+                    <span>{String(stepIndex + 1).padStart(2, "0")}</span>
+                    {step.title}
+                  </li>
+                ))}
+              </ul>
               <span>
                 Open lesson <i>→</i>
               </span>

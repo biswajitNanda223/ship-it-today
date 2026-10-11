@@ -15,11 +15,22 @@ function ArchitectureDiagram({ lesson }: { lesson: Lesson }) {
 
 export function LessonExperience({ lesson, siblings }: { lesson: Lesson; siblings: Lesson[] }) {
   const [chapter, setChapter] = useState(0);
+  const [copied, setCopied] = useState(false);
   const active = lesson.steps[chapter];
   const currentIndex = siblings.findIndex((item) => item.slug === lesson.slug);
   const previous = siblings[currentIndex - 1];
   const next = siblings[currentIndex + 1];
   const progress = ((chapter + 1) / lesson.steps.length) * 100;
+  const copyCode = async () => {
+    if (!active.code || !navigator.clipboard) return;
+    try {
+      await navigator.clipboard.writeText(active.code);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
+  };
 
   return (
     <main className="course-page academy-lesson">
@@ -52,6 +63,29 @@ export function LessonExperience({ lesson, siblings }: { lesson: Lesson; sibling
         </div>
       </header>
 
+      <section className="lesson-outcomes shell" aria-label="Lesson outcomes">
+        <article className="lesson-outcome">
+          <span>MENTAL MODEL</span>
+          <b>Follow one request end to end</b>
+          <p>See where responsibility moves and where the design can fail.</p>
+        </article>
+        <article className="lesson-outcome">
+          <span>YOU WILL DESIGN</span>
+          <b>
+            {lesson.nodes
+              .slice(0, 3)
+              .map((node) => node.name)
+              .join(" → ")}
+          </b>
+          <p>{lesson.nodes.length} connected components with explicit boundaries.</p>
+        </article>
+        <article className="lesson-outcome">
+          <span>REVIEW STANDARD</span>
+          <b>Correctness before scale</b>
+          <p>State the guarantee, bottleneck, signal, and rollback path.</p>
+        </article>
+      </section>
+
       <section className="lesson-player shell">
         <div className="player-topbar">
           <div>
@@ -71,6 +105,7 @@ export function LessonExperience({ lesson, siblings }: { lesson: Lesson; sibling
               className={chapter === index ? "active" : ""}
               onClick={() => setChapter(index)}
               key={step.title}
+              aria-current={chapter === index ? "step" : undefined}
             >
               <i>{String(index + 1).padStart(2, "0")}</i>
               <b>{step.title}</b>
@@ -81,6 +116,11 @@ export function LessonExperience({ lesson, siblings }: { lesson: Lesson; sibling
           ))}
         </aside>
         <article className="chapter-content" key={active.title}>
+          <div className="chapter-progress-rail" aria-hidden="true">
+            {lesson.steps.map((step, index) => (
+              <i className={index <= chapter ? "complete" : ""} key={step.title} />
+            ))}
+          </div>
           <small>
             CHAPTER {chapter + 1} OF {lesson.steps.length}
           </small>
@@ -98,18 +138,30 @@ export function LessonExperience({ lesson, siblings }: { lesson: Lesson; sibling
             <div className="academy-code">
               <header>
                 <span>PRODUCTION EXAMPLE</span>
-                <b>TypeScript / HTTP</b>
+                <button onClick={copyCode}>{copied ? "COPIED ✓" : "COPY CODE"}</button>
               </header>
               <pre>{active.code}</pre>
             </div>
           )}
-          <button
-            className="chapter-next"
-            onClick={() => setChapter((value) => Math.min(lesson.steps.length - 1, value + 1))}
-            disabled={chapter === lesson.steps.length - 1}
-          >
-            Continue to chapter {Math.min(chapter + 2, lesson.steps.length)} <span>→</span>
-          </button>
+          <div className="chapter-actions">
+            <button
+              className="chapter-previous"
+              onClick={() => setChapter((value) => Math.max(0, value - 1))}
+              disabled={chapter === 0}
+            >
+              <span>←</span> Previous
+            </button>
+            <button
+              className="chapter-next"
+              onClick={() => setChapter((value) => Math.min(lesson.steps.length - 1, value + 1))}
+              disabled={chapter === lesson.steps.length - 1}
+            >
+              {chapter === lesson.steps.length - 1
+                ? "Lesson complete"
+                : `Continue to chapter ${chapter + 2}`}{" "}
+              <span>→</span>
+            </button>
+          </div>
         </article>
         <aside className="lesson-notes">
           <span>DESIGN REVIEW</span>

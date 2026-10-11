@@ -4,10 +4,11 @@ import { useEffect, useRef } from "react";
 
 export function MotionLayer() {
   const raf = useRef(0);
+  const pointerRaf = useRef(0);
   useEffect(() => {
     const targets = [
       ...document.querySelectorAll<HTMLElement>(
-        "main section, .course-hero, .public-api-hero, .hld-canvas, .pattern-workbench, .request-studio, .ddia-studio",
+        "main section, main > header, .course-hero, .public-api-hero, .hld-canvas, .pattern-workbench, .request-studio, .ddia-studio",
       ),
     ];
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -18,11 +19,14 @@ export function MotionLayer() {
         () => {
           animate(
             element,
-            { opacity: [0.82, 1], transform: ["translateY(24px)", "translateY(0px)"] },
-            { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+            {
+              opacity: [0.7, 1],
+              transform: ["translateY(30px) scale(.99)", "translateY(0px) scale(1)"],
+            },
+            { duration: 0.78, ease: [0.16, 1, 0.3, 1] },
           );
           const cards = element.querySelectorAll<HTMLElement>(
-            ".lesson-card, .track-card, .deep-dives a, .ai-layer-inspector button, .ai-checklist article, .pattern-menu button",
+            ".lesson-card, .track-card, .deep-dives a, .ai-layer-inspector button, .ai-checklist article, .pattern-menu button, .chapter-points > div, .lesson-outcome",
           );
           if (cards.length) {
             animate(
@@ -31,7 +35,7 @@ export function MotionLayer() {
                 opacity: [0.84, 1],
                 transform: ["translateY(16px) scale(.985)", "translateY(0px) scale(1)"],
               },
-              { duration: 0.5, delay: stagger(0.045), ease: [0.22, 1, 0.36, 1] },
+              { duration: 0.58, delay: stagger(0.055), ease: [0.16, 1, 0.3, 1] },
             );
           }
         },
@@ -63,16 +67,40 @@ export function MotionLayer() {
     };
     onScroll();
     addEventListener("scroll", onScroll, { passive: true });
+
+    const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const onPointerMove = (event: PointerEvent) => {
+      if (!finePointer || reducedMotion) return;
+      cancelAnimationFrame(pointerRaf.current);
+      pointerRaf.current = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--pointer-x", `${event.clientX}px`);
+        document.documentElement.style.setProperty("--pointer-y", `${event.clientY}px`);
+        const card =
+          event.target instanceof Element
+            ? event.target.closest<HTMLElement>(
+                ".lesson-card, .academy-track-grid > a, .deep-dives a, .track-card",
+              )
+            : null;
+        if (!card) return;
+        const bounds = card.getBoundingClientRect();
+        card.style.setProperty("--card-x", `${event.clientX - bounds.left}px`);
+        card.style.setProperty("--card-y", `${event.clientY - bounds.top}px`);
+      });
+    };
+    addEventListener("pointermove", onPointerMove, { passive: true });
     return () => {
       stopInView.forEach((stop) => stop());
       removeEventListener("scroll", onScroll);
+      removeEventListener("pointermove", onPointerMove);
       cancelAnimationFrame(raf.current);
+      cancelAnimationFrame(pointerRaf.current);
     };
   }, []);
   return (
     <>
       <div className="scroll-progress" aria-hidden="true" />
       <div className="ambient-beam" aria-hidden="true" />
+      <div className="motion-spotlight" aria-hidden="true" />
     </>
   );
 }

@@ -1,6 +1,21 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const links = [
+  ["Academy", "/learn"],
+  ["HLD", "/learn/hld"],
+  ["LLD", "/learn/lld"],
+  ["Public APIs", "/learn/public-apis"],
+  ["Diagrams", "/learn/diagrams"],
+  ["Data", "/learn/ddia"],
+  ["GenAI", "/learn/genai"],
+] as const;
 
 export function LearnNav() {
+  const pathname = usePathname();
+
   return (
     <nav className="learn-nav shell">
       <Link className="brand" href="/">
@@ -10,13 +25,19 @@ export function LearnNav() {
         </span>
       </Link>
       <div>
-        <Link href="/learn">Academy</Link>
-        <Link href="/learn/hld">HLD</Link>
-        <Link href="/learn/lld">LLD</Link>
-        <Link href="/learn/public-apis">Public APIs</Link>
-        <Link href="/learn/diagrams">Diagrams</Link>
-        <Link href="/learn/ddia">Data</Link>
-        <Link href="/learn/genai">GenAI</Link>
+        {links.map(([label, href]) => {
+          const active = href === "/learn" ? pathname === href : pathname.startsWith(href);
+          return (
+            <Link
+              href={href}
+              key={href}
+              className={active ? "active" : ""}
+              aria-current={active ? "page" : undefined}
+            >
+              {label}
+            </Link>
+          );
+        })}
       </div>
       <Link className="back-home" href="/">
         ← World map
