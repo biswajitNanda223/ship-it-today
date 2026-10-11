@@ -1,31 +1,434 @@
 "use client";
-import { useMemo, useState } from "react";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import { JointArchitecture } from "../JointArchitecture";
 import { LearnNav } from "../LearnNav";
 
-const layers=[
- {name:"API Edge",detail:"Auth, quotas, schema validation, idempotency, request IDs"},
- {name:"AI Gateway",detail:"Model routing, fallbacks, budgets, semantic cache"},
- {name:"Safety",detail:"Input moderation, PII redaction, prompt-injection defense"},
- {name:"Context Engine",detail:"Query rewrite, hybrid retrieval, reranking, citations"},
- {name:"Inference",detail:"Streaming, tool calls, structured output, cancellation"},
- {name:"Evaluation",detail:"Traces, quality scores, latency, cost, drift monitoring"},
-];
-const patterns=[
- ["AI Gateway","Hide providers behind one contract. Route by task, cost, latency, region, and availability."],
- ["RAG Pipeline","Retrieve trusted context, rerank it, assemble a bounded prompt, and return grounded citations."],
- ["Tool-Using Agent","Let the model choose allowlisted tools while the application owns state, validation, and side effects."],
- ["Semantic Cache","Reuse responses for equivalent requests when freshness, identity, and safety constraints allow it."],
- ["Fallback Chain","Degrade from quality model to fast model, deterministic search, or cached response under failure."],
- ["Async Job","Move long generations to a durable queue with status polling, callbacks, cancellation, and retries."],
+type Transport = "rest" | "sse" | "websocket" | "job";
+
+const layers = [
+  {
+    name: "API Edge",
+    detail: "Identity, quotas, idempotency, schema validation",
+  },
+  {
+    name: "AI Gateway",
+    detail: "Provider routing, fallbacks, budgets, semantic cache",
+  },
+  {
+    name: "Safety",
+    detail: "PII redaction, moderation, injection defense",
+  },
+  {
+    name: "Context Engine",
+    detail: "Hybrid retrieval, reranking, citations",
+  },
+  {
+    name: "Inference",
+    detail: "Streaming, tool calls, structured output, cancellation",
+  },
+  {
+    name: "Evaluation",
+    detail: "Traces, quality, latency, cost, and drift",
+  },
 ];
 
-export default function GenAiPage(){
- const [active,setActive]=useState(1);const [quality,setQuality]=useState(64);const [rag,setRag]=useState(true);const [streaming,setStreaming]=useState(true);const [running,setRunning]=useState(false);const [stage,setStage]=useState(0);const [pattern,setPattern]=useState(0);
- const metrics=useMemo(()=>({latency:Math.round(240+quality*8+(rag?90:0)),cost:(.0012+quality*.00008+(rag?.0004:0)).toFixed(4),tokens:Math.round(220+quality*13+(rag?900:0)),quality:Math.min(98,55+Math.round(quality*.36)+(rag?12:0))}),[quality,rag]);
- function run(){setRunning(true);setStage(1);[2,3,4,5,6].forEach((n,i)=>setTimeout(()=>setStage(n),(i+1)*480));setTimeout(()=>setRunning(false),3400)}
- return <main className="course-page ai-page"><LearnNav/><header className="course-hero shell ai-hero"><span className="course-index">GENAI / 05</span><h1>Design AI backends.<br/><em>Beyond the model call.</em></h1><p>Build reliable GenAI systems with RAG, streaming, tool execution, provider routing, safety, evaluation, observability, and cost control.</p><div className="ai-status"><span/><b>AI SYSTEM ONLINE</b><small>6 layers · streaming enabled</small></div></header>
- <section className="ai-pipeline shell"><div className="section-head"><div><span className="kicker">LIVE INFERENCE PIPELINE</span><h2>One request.<br/><em>Six guarded stages.</em></h2></div><p>Click a layer to inspect its production responsibility, then run the complete animated request.</p></div><div className="ai-stage"><aside>{layers.map((x,i)=><button className={active===i?"active":""} key={x.name} onClick={()=>setActive(i)}><span>0{i+1}</span><div><b>{x.name}</b><small>{x.detail}</small></div><i>{stage>i?"✓":"→"}</i></button>)}</aside><div className="ai-flow"><div className="ai-grid"/><div className="ai-request">PROMPT<span>&quot;Design a global feed&quot;</span></div><div className="ai-rail">{layers.map((x,i)=><div key={x.name} className={stage>i?"ai-node passed":"ai-node"}><i>{i+1}</i><b>{x.name}</b>{i<5&&<span/>}</div>)}</div><div className="ai-detail" key={active}><small>ACTIVE LAYER</small><b>{layers[active].name}</b><p>{layers[active].detail}</p></div><button onClick={run} disabled={running}>{running?`Processing stage ${stage}/6…`:"Run inference flow →"}</button></div></div></section>
- <section className="ai-console-section"><div className="shell"><div className="section-head light"><div><span className="kicker">GENAI API PLAYGROUND</span><h2>Balance quality,<br/><em>latency, and cost.</em></h2></div><p>Adjust routing decisions and watch the prediction graph and request contract update immediately.</p></div><div className="ai-console"><div className="ai-controls"><label><span>Model quality <b>{quality}%</b></span><input type="range" min="10" max="100" value={quality} onChange={e=>setQuality(Number(e.target.value))}/></label><button className={rag?"on":""} onClick={()=>setRag(!rag)}><span><b>Retrieval augmented</b><small>Hybrid search + reranking</small></span><i><u/></i></button><button className={streaming?"on":""} onClick={()=>setStreaming(!streaming)}><span><b>Token streaming</b><small>Improve time to first token</small></span><i><u/></i></button><div className="ai-metrics"><div><small>P95 LATENCY</small><b>{metrics.latency}ms</b></div><div><small>COST / REQUEST</small><b>${metrics.cost}</b></div><div><small>QUALITY SCORE</small><b>{metrics.quality}</b></div></div></div><div className="ai-code"><div><span>POST /api/v1/ai/inference</span><b>{streaming?"text/event-stream":"application/json"}</b></div><pre>{`{\n  "prompt": "Explain consistent hashing",\n  "model": "${quality>70?"quality":"fast"}",\n  "useRag": ${rag},\n  "stream": ${streaming},\n  "maxTokens": ${metrics.tokens}\n}`}</pre><div className="token-stream"><span>RESPONSE</span><p>{streaming?"System design is the process of defining architecture":"{ \"answer\": \"System design is…\" }"}<i/></p></div></div><div className="ai-graph"><span>QUALITY / COST CURVE</span><div className="ai-bars">{[22,31,43,58,74,91].map((h,i)=><i key={h} style={{height:`${Math.min(96,h+quality/9)}%`,animationDelay:`${i*70}ms`}}><small>{i+1}</small></i>)}</div><div className="ai-budget">BUDGET LIMIT</div></div></div></div></section>
- <section className="ai-patterns shell"><div className="section-head"><div><span className="kicker">BACKEND PATTERN CATALOG</span><h2>Six patterns for<br/><em>production AI.</em></h2></div><p>The model is a dependency. Your backend must own reliability, data boundaries, orchestration, and measurable quality.</p></div><div className="ai-pattern-layout"><div>{patterns.map((x,i)=><button className={pattern===i?"active":""} key={x[0]} onClick={()=>setPattern(i)}><span>0{i+1}</span><b>{x[0]}</b><i>→</i></button>)}</div><article key={pattern}><small>GENAI BACKEND PATTERN</small><h3>{patterns[pattern][0]}</h3><p>{patterns[pattern][1]}</p><div className="mini-ai-diagram"><div>CLIENT</div><i>→</i><div className="hot">{patterns[pattern][0].toUpperCase()}</div><i>→</i><div>PROVIDER</div><span className="mini-packet"/></div><ul><li>Explicit timeout and cancellation</li><li>Trace every decision and model call</li><li>Budget tokens and concurrency</li><li>Test quality with versioned eval sets</li></ul></article></div></section>
- <section className="ai-checklist shell"><h2>Production readiness</h2><div>{["Threat model","PII boundary","Prompt versioning","Eval dataset","Model fallback","Vector index","Citation checks","Tool allowlist","Rate limits","Token budget","Semantic cache","Trace sampling","Cost alerts","Human escalation","Rollback plan"].map((x,i)=><article key={x}><span>{String(i+1).padStart(2,"0")}</span><b>{x}</b><i>✓</i></article>)}</div></section></main>
+const transports: Record<
+  Transport,
+  {
+    label: string;
+    route: string;
+    contract: string;
+    use: string;
+    code: string;
+    events: string[];
+  }
+> = {
+  rest: {
+    label: "REST JSON",
+    route: "POST /api/v1/ai/inference",
+    contract: "application/json",
+    use: "Short, complete responses and structured output.",
+    code: `const result = await fetch("/api/v1/ai/inference", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({
+    prompt,
+    model: "quality",
+    useRag: true,
+  }),
+});
+
+const response = await result.json();`,
+    events: ["request.accepted", "retrieval.completed", "inference.completed", "response.json"],
+  },
+  sse: {
+    label: "SSE STREAM",
+    route: "POST /api/v1/ai/stream",
+    contract: "text/event-stream",
+    use: "Gemini-style server-to-client token and tool events.",
+    code: `const response = await fetch("/api/v1/ai/stream", {
+  method: "POST",
+  body: JSON.stringify({ prompt }),
+});
+
+for await (const event of parseSse(response.body)) {
+  if (event.type === "content.delta") append(event.text);
+  if (event.type === "tool.call") showTool(event);
+}`,
+    events: [
+      "response.created",
+      "content.delta",
+      "tool.call",
+      "tool.result",
+      "content.delta",
+      "response.completed",
+    ],
+  },
+  websocket: {
+    label: "WEBSOCKET",
+    route: "WS /api/v1/ai/realtime",
+    contract: "bidirectional events",
+    use: "Voice, interruption, live agents, and continuous sessions.",
+    code: `const socket = new WebSocket(
+  "wss://api.example.com/api/v1/ai/realtime",
+);
+
+socket.onopen = () => socket.send(JSON.stringify({
+  type: "input.text",
+  text: prompt,
+}));
+
+socket.onmessage = ({ data }) => applyEvent(JSON.parse(data));`,
+    events: [
+      "session.created",
+      "input.accepted",
+      "response.delta",
+      "audio.delta",
+      "response.completed",
+    ],
+  },
+  job: {
+    label: "BACKGROUND JOB",
+    route: "POST /api/v1/ai/jobs",
+    contract: "202 + status resource",
+    use: "Long generations, batch work, retries, and cancellation.",
+    code: `const { data: job } = await createJob({ prompt });
+
+while (!isTerminal(job.status)) {
+  await wait(backoff.next());
+  job = await getJob(job.id);
+}
+
+// DELETE /ai/jobs/:id cancels pending work.`,
+    events: [
+      "job.queued",
+      "worker.claimed",
+      "retrieval.completed",
+      "generation.progress",
+      "artifact.persisted",
+      "job.completed",
+    ],
+  },
+};
+
+const patterns = [
+  ["AI Gateway", "Own provider routing, budget, retries, and fallback policy."],
+  ["RAG Pipeline", "Retrieve, rerank, bound context, and verify citations."],
+  ["Tool Agent", "Allowlist tools while the application owns state and effects."],
+  ["Semantic Cache", "Reuse safe equivalent responses with explicit freshness."],
+  ["Fallback Chain", "Degrade to fast models, search, or deterministic output."],
+  ["Async Job", "Use durable queues for long generations and retries."],
+];
+
+export default function GenAiPage() {
+  const [activeLayer, setActiveLayer] = useState(1);
+  const [quality, setQuality] = useState(64);
+  const [rag, setRag] = useState(true);
+  const [transport, setTransport] = useState<Transport>("sse");
+  const [running, setRunning] = useState(false);
+  const [stage, setStage] = useState(0);
+  const [eventCount, setEventCount] = useState(0);
+  const [pattern, setPattern] = useState(0);
+  const timers = useRef<number[]>([]);
+
+  const selectedTransport = transports[transport];
+  const metrics = useMemo(
+    () => ({
+      latency: Math.round(240 + quality * 8 + (rag ? 90 : 0)),
+      cost: (0.0012 + quality * 0.00008 + (rag ? 0.0004 : 0)).toFixed(4),
+      tokens: Math.round(220 + quality * 13 + (rag ? 900 : 0)),
+      quality: Math.min(98, 55 + Math.round(quality * 0.36) + (rag ? 12 : 0)),
+    }),
+    [quality, rag],
+  );
+
+  useEffect(() => () => timers.current.forEach((timer) => window.clearTimeout(timer)), []);
+
+  function runDemo() {
+    timers.current.forEach((timer) => window.clearTimeout(timer));
+    setRunning(true);
+    setStage(0);
+    setEventCount(0);
+    selectedTransport.events.forEach((_, index) => {
+      const timer = window.setTimeout(
+        () => {
+          setStage(Math.min(index, layers.length - 1));
+          setEventCount(index + 1);
+          if (index === selectedTransport.events.length - 1) setRunning(false);
+        },
+        430 * (index + 1),
+      );
+      timers.current.push(timer);
+    });
+  }
+
+  return (
+    <main className="course-page ai-page">
+      <LearnNav />
+      <header className="course-hero shell ai-hero ai-hero-modern">
+        <span className="course-index">GENAI / BACKEND SYSTEMS</span>
+        <h1>
+          Ship AI systems.
+          <br />
+          <em>Not model demos.</em>
+        </h1>
+        <p>
+          Design production GenAI backends with REST, Gemini-style SSE, bidirectional WebSockets,
+          background jobs, RAG, tools, safety, evaluation, and cost controls.
+        </p>
+        <div className="ai-transport-pills">
+          <span>REST</span>
+          <span>SSE</span>
+          <span>WEBSOCKET</span>
+          <span>ASYNC JOBS</span>
+        </div>
+      </header>
+
+      <section className="ai-architecture shell">
+        <header>
+          <div>
+            <span className="kicker">PRODUCTION REQUEST PATH</span>
+            <h2>Every layer stays visible.</h2>
+          </div>
+          <p>
+            The application owns reliability, context, tools, and measurement. The model remains a
+            replaceable dependency.
+          </p>
+        </header>
+        <JointArchitecture
+          nodes={layers}
+          kind="sequence"
+          activeFrame={running ? stage : undefined}
+        />
+        <div className="ai-layer-inspector">
+          {layers.map((layer, index) => (
+            <button
+              className={activeLayer === index ? "active" : ""}
+              key={layer.name}
+              onClick={() => setActiveLayer(index)}
+            >
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <b>{layer.name}</b>
+              <small>{layer.detail}</small>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="ai-api-studio">
+        <div className="shell">
+          <div className="section-head light">
+            <div>
+              <span className="kicker">GENAI TRANSPORT LAB</span>
+              <h2>
+                Choose the protocol.
+                <br />
+                <em>Trace every event.</em>
+              </h2>
+            </div>
+            <p>
+              Compare request contracts, streaming behavior, background work, and the operational
+              controls each transport requires.
+            </p>
+          </div>
+
+          <div className="ai-transport-tabs">
+            {(Object.keys(transports) as Transport[]).map((item) => (
+              <button
+                className={transport === item ? "active" : ""}
+                key={item}
+                onClick={() => {
+                  setTransport(item);
+                  setEventCount(0);
+                  setRunning(false);
+                }}
+              >
+                <span>{transports[item].label}</span>
+                <small>{transports[item].contract}</small>
+              </button>
+            ))}
+          </div>
+
+          <div className="ai-api-workbench">
+            <aside className="ai-route-contract">
+              <span>ENDPOINT</span>
+              <code>{selectedTransport.route}</code>
+              <p>{selectedTransport.use}</p>
+              <label>
+                <span>
+                  Model quality <b>{quality}%</b>
+                </span>
+                <input
+                  type="range"
+                  min="10"
+                  max="100"
+                  value={quality}
+                  onChange={(event) => setQuality(Number(event.target.value))}
+                />
+              </label>
+              <button
+                className={rag ? "ai-toggle on" : "ai-toggle"}
+                onClick={() => setRag((value) => !value)}
+              >
+                <span>
+                  <b>RAG + citations</b>
+                  <small>Hybrid search and reranking</small>
+                </span>
+                <i>
+                  <u />
+                </i>
+              </button>
+              <div className="ai-metric-grid">
+                <div>
+                  <small>P95</small>
+                  <b>{metrics.latency}ms</b>
+                </div>
+                <div>
+                  <small>COST</small>
+                  <b>${metrics.cost}</b>
+                </div>
+                <div>
+                  <small>TOKENS</small>
+                  <b>{metrics.tokens}</b>
+                </div>
+                <div>
+                  <small>QUALITY</small>
+                  <b>{metrics.quality}</b>
+                </div>
+              </div>
+            </aside>
+
+            <article className="ai-code-contract">
+              <header>
+                <span>CLIENT IMPLEMENTATION</span>
+                <b>TypeScript</b>
+              </header>
+              <pre>{selectedTransport.code}</pre>
+            </article>
+
+            <aside className="ai-event-console">
+              <header>
+                <span>LIVE EVENTS</span>
+                <i>{running ? "STREAMING" : "READY"}</i>
+              </header>
+              <div>
+                {selectedTransport.events.map((item, index) => (
+                  <article
+                    className={index < eventCount ? "received" : ""}
+                    key={`${transport}-${item}-${index}`}
+                  >
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <b>{item}</b>
+                    <small>{index < eventCount ? "received" : "waiting"}</small>
+                  </article>
+                ))}
+              </div>
+              <button onClick={runDemo} disabled={running}>
+                {running ? "Receiving events…" : `Run ${selectedTransport.label} demo →`}
+              </button>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section className="ai-patterns shell">
+        <div className="section-head">
+          <div>
+            <span className="kicker">BACKEND PATTERN CATALOG</span>
+            <h2>
+              Six patterns for
+              <br />
+              <em>production AI.</em>
+            </h2>
+          </div>
+          <p>
+            Apply the patterns where they solve a measured reliability, quality, or cost problem.
+          </p>
+        </div>
+        <div className="ai-pattern-layout">
+          <div>
+            {patterns.map((item, index) => (
+              <button
+                className={pattern === index ? "active" : ""}
+                key={item[0]}
+                onClick={() => setPattern(index)}
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <b>{item[0]}</b>
+                <i>→</i>
+              </button>
+            ))}
+          </div>
+          <article key={pattern}>
+            <small>GENAI BACKEND PATTERN</small>
+            <h3>{patterns[pattern][0]}</h3>
+            <p>{patterns[pattern][1]}</p>
+            <div className="ai-pattern-flow">
+              <span>CLIENT</span>
+              <i>validated request →</i>
+              <b>{patterns[pattern][0].toUpperCase()}</b>
+              <i>bounded call →</i>
+              <span>MODEL / TOOL</span>
+            </div>
+            <ul>
+              <li>Explicit timeout and cancellation</li>
+              <li>Trace every decision and model call</li>
+              <li>Budget tokens and concurrency</li>
+              <li>Test quality with versioned eval sets</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section className="ai-checklist shell">
+        <h2>Production readiness</h2>
+        <div>
+          {[
+            "Threat model",
+            "PII boundary",
+            "Prompt versioning",
+            "Eval dataset",
+            "Model fallback",
+            "Vector index",
+            "Citation checks",
+            "Tool allowlist",
+            "Rate limits",
+            "Token budget",
+            "Semantic cache",
+            "Trace sampling",
+            "Cost alerts",
+            "Human escalation",
+            "Rollback plan",
+          ].map((item, index) => (
+            <article key={item}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <b>{item}</b>
+              <i>✓</i>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
 }

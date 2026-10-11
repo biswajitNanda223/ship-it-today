@@ -1,0 +1,8 @@
+node_modules
+.next
+.next-*
+dist
+.wrangler
+coverage
+*.tar.gz
+package-lock.json

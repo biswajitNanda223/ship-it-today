@@ -5,7 +5,15 @@ import type { DiagramKind } from "./academy-data";
 
 type Node = { name: string; detail: string };
 
-export function JointArchitecture({ nodes, kind, activeFrame }: { nodes: Node[]; kind: DiagramKind; activeFrame?: number }) {
+export function JointArchitecture({
+  nodes,
+  kind,
+  activeFrame,
+}: {
+  nodes: Node[];
+  kind: DiagramKind;
+  activeFrame?: number;
+}) {
   const host = useRef<HTMLDivElement>(null);
   const graphRef = useRef<import("@joint/core").dia.Graph | null>(null);
   const cellsRef = useRef<import("@joint/core").dia.Element[]>([]);
@@ -65,8 +73,21 @@ export function JointArchitecture({ nodes, kind, activeFrame }: { nodes: Node[];
           rectangle.resize(nodeWidth, nodeHeight);
           rectangle.attr({
             root: { class: "joint-system-node" },
-            body: { fill: index % 2 ? "#272033" : "#211b2b", stroke: "#8f7da4", strokeWidth: 1.5, rx: kind === "state" ? 28 : 7, ry: kind === "state" ? 28 : 7 },
-            label: { text: `${String(index + 1).padStart(2, "0")}  ${node.name}\n${node.detail}`, fill: "#f8f5ff", fontFamily: "var(--font-mono)", fontSize: compact ? 8 : 9, lineHeight: 16, textWrap: { width: nodeWidth - 18, height: nodeHeight - 12, ellipsis: true } },
+            body: {
+              fill: index % 2 ? "#272033" : "#211b2b",
+              stroke: "#8f7da4",
+              strokeWidth: 1.5,
+              rx: kind === "state" ? 28 : 7,
+              ry: kind === "state" ? 28 : 7,
+            },
+            label: {
+              text: `${String(index + 1).padStart(2, "0")}  ${node.name}\n${node.detail}`,
+              fill: "#f8f5ff",
+              fontFamily: "var(--font-mono)",
+              fontSize: compact ? 8 : 9,
+              lineHeight: 16,
+              textWrap: { width: nodeWidth - 18, height: nodeHeight - 12, ellipsis: true },
+            },
           });
           rectangle.addTo(graph);
           return rectangle;
@@ -80,8 +101,32 @@ export function JointArchitecture({ nodes, kind, activeFrame }: { nodes: Node[];
           link.target(target);
           link.router("manhattan", { padding: 18, step: 10 });
           link.connector("rounded", { radius: 10 });
-          link.attr({ line: { class: "joint-animated-link", stroke: "#ae94ff", strokeWidth: 2.5, strokeDasharray: "10 6", targetMarker: { type: "path", d: "M 12 -6 0 0 12 6 z", fill: "#c8ff3d", stroke: "#c8ff3d" } } });
-          link.appendLabel({ attrs: { text: { text: index % 2 === 0 ? "request" : "result", fill: "#9e96a8", fontFamily: "var(--font-mono)", fontSize: 7 }, rect: { fill: "#17131e", stroke: "none" } }, position: { distance: .5 } });
+          link.attr({
+            line: {
+              class: "joint-animated-link",
+              stroke: "#ae94ff",
+              strokeWidth: 2.5,
+              strokeDasharray: "10 6",
+              targetMarker: {
+                type: "path",
+                d: "M 12 -6 0 0 12 6 z",
+                fill: "#c8ff3d",
+                stroke: "#c8ff3d",
+              },
+            },
+          });
+          link.appendLabel({
+            attrs: {
+              text: {
+                text: index % 2 === 0 ? "request" : "result",
+                fill: "#9e96a8",
+                fontFamily: "var(--font-mono)",
+                fontSize: 7,
+              },
+              rect: { fill: "#17131e", stroke: "none" },
+            },
+            position: { distance: 0.5 },
+          });
           link.addTo(graph);
           link.toBack();
         });
@@ -94,15 +139,59 @@ export function JointArchitecture({ nodes, kind, activeFrame }: { nodes: Node[];
     }
 
     draw();
-    return () => { disposed = true; observer?.disconnect(); paper?.remove(); graphRef.current = null; cellsRef.current = []; };
+    return () => {
+      disposed = true;
+      observer?.disconnect();
+      paper?.remove();
+      graphRef.current = null;
+      cellsRef.current = [];
+    };
   }, [nodes, kind]);
 
   useEffect(() => {
     cellsRef.current.forEach((cell, index) => {
       const isStatic = activeFrame === undefined;
-      cell.attr({ body: index === activeFrame ? { fill: "#6c42ef", stroke: "#c8ff3d", strokeWidth: 2.5 } : { fill: index % 2 ? "#272033" : "#211b2b", stroke: isStatic ? "#8f7da4" : "#655a72", strokeWidth: 1.5 }, label: { fill: isStatic || index <= activeFrame ? "#ffffff" : "#aaa3b0" } });
+      cell.attr({
+        body:
+          index === activeFrame
+            ? { fill: "#6c42ef", stroke: "#c8ff3d", strokeWidth: 2.5 }
+            : {
+                fill: index % 2 ? "#272033" : "#211b2b",
+                stroke: isStatic ? "#8f7da4" : "#655a72",
+                strokeWidth: 1.5,
+              },
+        label: { fill: isStatic || index <= activeFrame ? "#ffffff" : "#aaa3b0" },
+      });
     });
   }, [activeFrame, ready]);
 
-  return <div className="joint-stage"><div ref={host} className="joint-paper" aria-hidden="true"/><ol className="sr-diagram">{nodes.map(node => <li key={node.name}><b>{node.name}</b>: {node.detail}</li>)}</ol>{!ready && <div className="joint-loading"><i/><span>Building architecture graph…</span></div>}<div className="joint-legend"><span><i className="request"/>REQUEST PATH</span><span><i className="active"/>ACTIVE COMPONENT</span><span>ARROWS SHOW DATA DIRECTION</span></div></div>;
+  return (
+    <div className="joint-stage">
+      <div ref={host} className="joint-paper" aria-hidden="true" />
+      <ol className="sr-diagram">
+        {nodes.map((node) => (
+          <li key={node.name}>
+            <b>{node.name}</b>: {node.detail}
+          </li>
+        ))}
+      </ol>
+      {!ready && (
+        <div className="joint-loading">
+          <i />
+          <span>Building architecture graph…</span>
+        </div>
+      )}
+      <div className="joint-legend">
+        <span>
+          <i className="request" />
+          REQUEST PATH
+        </span>
+        <span>
+          <i className="active" />
+          ACTIVE COMPONENT
+        </span>
+        <span>ARROWS SHOW DATA DIRECTION</span>
+      </div>
+    </div>
+  );
 }
