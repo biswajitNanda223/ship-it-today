@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
 
 :root {
   --ink: #17151d;
@@ -1210,6 +1211,330 @@ footer > span {
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Responsive motion and diagram system */
+.signal-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  border: 1px solid color-mix(in srgb, var(--purple) 45%, transparent);
+  background: #ffffffa8;
+  color: var(--purple);
+  font: 700 11px/1 var(--mono);
+  transform: rotate(0deg);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.35s ease;
+}
+.eyebrow:hover .signal-mark {
+  transform: translate(3px, -3px) rotate(8deg);
+  background: var(--lime);
+}
+.pulse,
+.trace-dot,
+.system-pulse,
+.topology-node u,
+.token-stream i {
+  display: none !important;
+  animation: none !important;
+}
+.data-source i,
+.data-log i,
+.api-status i {
+  animation: none !important;
+}
+.data-log i:nth-child(2) {
+  height: 28px;
+}
+.data-log i:nth-child(3) {
+  height: 36px;
+}
+.data-log i:nth-child(4) {
+  height: 22px;
+}
+.data-log i:nth-child(5) {
+  height: 34px;
+}
+.ambient-beam {
+  position: fixed;
+  z-index: -1;
+  inset: -20vh -10vw auto auto;
+  width: min(900px, 70vw);
+  height: 120vh;
+  pointer-events: none;
+  opacity: 0.34;
+  transform: translate3d(0, calc(var(--scroll-y, 0px) * -0.018), 0) rotate(18deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0 30%,
+    #6c42ef0d 30% 31%,
+    transparent 31% 50%,
+    #c8ff3d10 50% 51%,
+    transparent 51% 100%
+  );
+  will-change: transform;
+}
+
+.flow-topology {
+  position: relative;
+  width: 100%;
+  height: 470px;
+  overflow: hidden;
+  border: 1px solid #332a3e;
+  background: linear-gradient(135deg, #ffffff08 0 1px, transparent 1px 72px), #15111b;
+  box-shadow: 0 28px 70px #291b4d24;
+}
+.flow-topology .react-flow__pane {
+  cursor: grab;
+}
+.flow-topology .react-flow__pane:active {
+  cursor: grabbing;
+}
+.flow-topology .react-flow__node {
+  width: 230px;
+  border: 0;
+  background: transparent;
+}
+.flow-topology-node {
+  min-height: 122px;
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  align-content: center;
+  gap: 7px 10px;
+  padding: 18px;
+  border: 1px solid #69597d;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #282031, #19151f);
+  color: white;
+  box-shadow: 0 18px 35px #0006;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.flow-topology-node.active {
+  border-color: var(--lime);
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 3px #c8ff3d16,
+    0 22px 42px #0008;
+}
+.flow-topology-node > span {
+  grid-row: 1/3;
+  color: var(--lime);
+  font: 700 9px var(--mono);
+}
+.flow-topology-node b {
+  font-size: 13px;
+  letter-spacing: -0.02em;
+}
+.flow-topology-node small {
+  color: #aaa2b2;
+  font: 8px/1.5 var(--mono);
+}
+.flow-topology .react-flow__edge-path {
+  stroke: #9278dc;
+  filter: drop-shadow(0 0 5px #7958e880);
+  transition:
+    stroke 0.3s ease,
+    filter 0.3s ease;
+}
+.flow-topology .react-flow__edge.completed .react-flow__edge-path {
+  stroke: var(--lime);
+  filter: drop-shadow(0 0 7px #c8ff3d80);
+}
+.flow-topology-hint {
+  position: absolute;
+  z-index: 5;
+  left: 16px;
+  bottom: 14px;
+  padding: 8px 10px;
+  border: 1px solid #ffffff16;
+  background: #0e0b13cf;
+  color: #9d94a6;
+  font: 7px var(--mono);
+  letter-spacing: 0.09em;
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+}
+
+.joint-stage {
+  min-height: 430px;
+  border: 1px solid #30283a;
+  border-radius: 10px;
+  box-shadow: 0 28px 70px #291b4d24;
+  transition: height 0.25s ease;
+}
+.joint-paper .joint-system-node:hover {
+  filter: drop-shadow(0 18px 24px #0008) drop-shadow(0 0 10px #6c42ef4a);
+}
+.joint-legend {
+  padding: 9px 11px;
+  border: 1px solid #ffffff12;
+  border-radius: 7px;
+  background: #0f0c14d9;
+  backdrop-filter: blur(10px);
+}
+.joint-legend span {
+  font-size: 7px;
+}
+
+.lesson-card,
+.academy-track-grid > a,
+.deep-dives a,
+.ai-layer-inspector button,
+.ai-checklist article,
+.pattern-menu button,
+.track {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease,
+    background-color 0.35s ease;
+}
+@media (hover: hover) {
+  .lesson-card:hover,
+  .academy-track-grid > a:hover,
+  .deep-dives a:hover,
+  .ai-checklist article:hover,
+  .track:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 20px 45px #281b4c18;
+  }
+  .ai-layer-inspector button:hover,
+  .pattern-menu button:hover {
+    transform: translateX(4px);
+  }
+}
+
+@media (max-width: 900px) {
+  .shell {
+    width: min(100% - 28px, 720px);
+  }
+  .nav {
+    height: 70px;
+  }
+  .nav-links {
+    display: none;
+  }
+  .hero {
+    padding-top: 56px;
+  }
+  .hero h1,
+  .section-head h2,
+  .roadmap-copy h2,
+  .final-cta h2 {
+    font-size: clamp(44px, 11vw, 72px);
+  }
+  .ai-architecture {
+    padding-bottom: 78px;
+  }
+  .flow-topology {
+    height: 540px;
+  }
+}
+
+@media (max-width: 620px) {
+  .shell {
+    width: calc(100% - 22px);
+  }
+  .brand {
+    font-size: 13px;
+  }
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    box-shadow: 3px 3px 0 var(--lime);
+  }
+  .xp-pill {
+    display: none;
+  }
+  .nav-cta {
+    padding: 10px 11px;
+  }
+  .hero {
+    padding-top: 42px;
+  }
+  .hero h1,
+  .section-head h2,
+  .roadmap-copy h2,
+  .final-cta h2 {
+    font-size: clamp(39px, 13vw, 58px);
+    line-height: 0.98;
+  }
+  .hero-copy {
+    font-size: 16px;
+  }
+  .hero-actions {
+    flex-direction: column;
+  }
+  .hero-actions .button {
+    width: 100%;
+  }
+  .world {
+    height: 520px;
+    margin-top: 42px;
+  }
+  .flow-topology {
+    height: 570px;
+  }
+  .flow-topology .react-flow__node {
+    width: 170px;
+  }
+  .flow-topology-node {
+    min-height: 116px;
+    padding: 14px;
+  }
+  .flow-topology-node small {
+    font-size: 7px;
+  }
+  .flow-topology-hint {
+    right: 12px;
+    left: 12px;
+    text-align: center;
+  }
+  .joint-stage {
+    border-radius: 7px;
+  }
+  .joint-legend {
+    gap: 10px;
+  }
+  .joint-legend span {
+    font-size: 6px;
+  }
+  .ai-architecture > header h2 {
+    font-size: 38px;
+  }
+  .ai-layer-inspector button {
+    min-width: 164px;
+  }
+  .ai-api-studio {
+    padding: 78px 0;
+  }
+  .ai-code-contract pre {
+    padding: 18px;
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-beam {
+    transform: rotate(18deg);
+  }
+  .flow-topology-node,
+  .lesson-card,
+  .academy-track-grid > a,
+  .deep-dives a,
+  .ai-layer-inspector button,
+  .ai-checklist article,
+  .pattern-menu button,
+  .track {
     animation: none !important;
     transition: none !important;
   }
@@ -5617,8 +5942,10 @@ body {
   overflow: visible;
 }
 .joint-paper .joint-animated-link {
-  animation: jointDash 0.75s linear infinite;
-  filter: drop-shadow(0 0 4px #8c6eff88);
+  filter: drop-shadow(0 0 5px #8c6eff99);
+  transition:
+    stroke 0.25s ease,
+    filter 0.25s ease;
 }
 .joint-paper .joint-system-node {
   filter: drop-shadow(0 12px 18px #0005);
@@ -5642,7 +5969,7 @@ body {
 }
 .joint-legend i {
   width: 18px;
-  border-top: 2px dashed var(--purple);
+  border-top: 2px solid var(--purple);
 }
 .joint-legend i.active {
   width: 8px;

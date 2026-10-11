@@ -22,11 +22,13 @@ export function JointArchitecture({
   useEffect(() => {
     let paper: import("@joint/core").dia.Paper | undefined;
     let observer: ResizeObserver | undefined;
+    let hostElement: HTMLDivElement | null = null;
     let disposed = false;
 
     async function draw() {
       const joint = await import("@joint/core");
       if (!host.current || disposed) return;
+      hostElement = host.current;
       const graph = new joint.dia.Graph({}, { cellNamespace: joint.shapes });
       graphRef.current = graph;
 
@@ -39,14 +41,23 @@ export function JointArchitecture({
         paper?.remove();
         graph.clear();
         const width = measuredWidth;
-        const compact = width < 680;
-        const columns = compact ? 2 : 3;
-        const nodeWidth = compact ? Math.min(145, width / 2 - 30) : 172;
-        const nodeHeight = kind === "class" ? 105 : 78;
+        const compact = width < 640;
+        const tablet = width < 960;
+        const columns = compact ? 1 : tablet ? 2 : 3;
+        const nodeWidth = compact
+          ? Math.min(340, width - 52)
+          : tablet
+            ? Math.min(260, width / 2 - 54)
+            : Math.min(250, width / 3 - 54);
+        const nodeHeight = kind === "class" ? 118 : 92;
         const gapX = (width - columns * nodeWidth) / (columns + 1);
         const rows = Math.ceil(nodes.length / columns);
-        const usableHeight = compact ? Math.max(500, rows * 150) : Math.max(440, rows * 150);
+        const rowGap = compact ? 54 : 76;
+        const usableHeight = Math.max(430, 58 + rows * (nodeHeight + rowGap));
         host.current.style.height = `${usableHeight}px`;
+        if (host.current.parentElement) {
+          host.current.parentElement.style.height = `${usableHeight}px`;
+        }
 
         paper = new joint.dia.Paper({
           el: host.current,
@@ -54,7 +65,7 @@ export function JointArchitecture({
           width,
           height: usableHeight,
           gridSize: 10,
-          drawGrid: { name: "mesh", args: { color: "#ffffff0a", thickness: 1 } },
+          drawGrid: false,
           background: { color: "transparent" },
           interactive: false,
           async: false,
@@ -67,7 +78,7 @@ export function JointArchitecture({
           const reverse = row % 2 === 1;
           const visualColumn = reverse ? columns - column - 1 : column;
           const x = gapX + visualColumn * (nodeWidth + gapX);
-          const y = 54 + row * (nodeHeight + 68);
+          const y = 42 + row * (nodeHeight + rowGap);
           const rectangle = new joint.shapes.standard.Rectangle();
           rectangle.position(x, y);
           rectangle.resize(nodeWidth, nodeHeight);
@@ -84,9 +95,10 @@ export function JointArchitecture({
               text: `${String(index + 1).padStart(2, "0")}  ${node.name}\n${node.detail}`,
               fill: "#f8f5ff",
               fontFamily: "var(--font-mono)",
-              fontSize: compact ? 8 : 9,
-              lineHeight: 16,
-              textWrap: { width: nodeWidth - 18, height: nodeHeight - 12, ellipsis: true },
+              fontSize: compact ? 11 : 10,
+              fontWeight: 600,
+              lineHeight: 18,
+              textWrap: { width: nodeWidth - 28, height: nodeHeight - 20, ellipsis: true },
             },
           });
           rectangle.addTo(graph);
@@ -105,8 +117,8 @@ export function JointArchitecture({
             line: {
               class: "joint-animated-link",
               stroke: "#ae94ff",
-              strokeWidth: 2.5,
-              strokeDasharray: "10 6",
+              strokeWidth: 3,
+              strokeLinejoin: "round",
               targetMarker: {
                 type: "path",
                 d: "M 12 -6 0 0 12 6 z",
@@ -121,9 +133,10 @@ export function JointArchitecture({
                 text: index % 2 === 0 ? "request" : "result",
                 fill: "#9e96a8",
                 fontFamily: "var(--font-mono)",
-                fontSize: 7,
+                fontSize: 9,
+                fontWeight: 700,
               },
-              rect: { fill: "#17131e", stroke: "none" },
+              rect: { fill: "#17131e", stroke: "#4a3f58", strokeWidth: 1, rx: 3, ry: 3 },
             },
             position: { distance: 0.5 },
           });
@@ -143,6 +156,7 @@ export function JointArchitecture({
       disposed = true;
       observer?.disconnect();
       paper?.remove();
+      if (hostElement?.parentElement) hostElement.parentElement.style.height = "";
       graphRef.current = null;
       cellsRef.current = [];
     };

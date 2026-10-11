@@ -1,4 +1,5 @@
 "use client";
+import { animate, inView, stagger } from "motion";
 import { useEffect, useRef } from "react";
 
 export function MotionLayer() {
@@ -9,21 +10,40 @@ export function MotionLayer() {
         "main section, .course-hero, .public-api-hero, .hld-canvas, .pattern-workbench, .request-studio, .ddia-studio",
       ),
     ];
-    targets.forEach((el, i) => {
-      el.classList.add("scroll-reveal");
-      el.style.setProperty("--reveal-delay", `${Math.min(i % 4, 3) * 45}ms`);
-    });
-    const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const stopInView = targets.map((element) => {
+      if (reducedMotion) return () => undefined;
+      element.style.opacity = "0";
+      return inView(
+        element,
+        () => {
+          animate(
+            element,
+            { opacity: [0, 1], transform: ["translateY(30px)", "translateY(0px)"] },
+            { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+          );
+          const cards = element.querySelectorAll<HTMLElement>(
+            ".lesson-card, .track-card, .deep-dives a, .ai-layer-inspector button, .ai-checklist article, .pattern-menu button",
+          );
+          if (cards.length) {
+            animate(
+              cards,
+              { opacity: [0, 1], transform: ["translateY(18px) scale(.985)", "none"] },
+              { duration: 0.5, delay: stagger(0.045), ease: [0.22, 1, 0.36, 1] },
+            );
           }
-        }),
-      { threshold: 0.09, rootMargin: "0px 0px -6% 0px" },
-    );
-    targets.forEach((el) => observer.observe(el));
+        },
+        { margin: "0px 0px -7% 0px", amount: 0.08 },
+      );
+    });
+
+    if (!reducedMotion) {
+      animate(
+        ".nav > *, .learn-nav > *",
+        { opacity: [0, 1], transform: ["translateY(-12px)", "translateY(0px)"] },
+        { duration: 0.5, delay: stagger(0.055), ease: [0.22, 1, 0.36, 1] },
+      );
+    }
     let previous = scrollY;
     const onScroll = () => {
       cancelAnimationFrame(raf.current);
@@ -42,7 +62,7 @@ export function MotionLayer() {
     onScroll();
     addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      observer.disconnect();
+      stopInView.forEach((stop) => stop());
       removeEventListener("scroll", onScroll);
       cancelAnimationFrame(raf.current);
     };
@@ -50,7 +70,7 @@ export function MotionLayer() {
   return (
     <>
       <div className="scroll-progress" aria-hidden="true" />
-      <div className="ambient-orb" aria-hidden="true" />
+      <div className="ambient-beam" aria-hidden="true" />
     </>
   );
 }

@@ -336,7 +336,7 @@ export default function Home() {
 
       <section className="hero shell" id="top">
         <div className="eyebrow">
-          <span className="pulse" /> ENGINEERING IS A CRAFT. PRACTICE IT.
+          <span className="signal-mark">↗</span> ENGINEERING IS A CRAFT. PRACTICE IT.
         </div>
         <h1>
           Design it. Scale it.

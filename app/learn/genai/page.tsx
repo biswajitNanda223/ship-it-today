@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { JointArchitecture } from "../JointArchitecture";
+import { FlowTopology } from "../../components/FlowTopology";
 import { LearnNav } from "../LearnNav";
 
 type Transport = "rest" | "sse" | "websocket" | "job";
@@ -216,11 +216,7 @@ export default function GenAiPage() {
             replaceable dependency.
           </p>
         </header>
-        <JointArchitecture
-          nodes={layers}
-          kind="sequence"
-          activeFrame={running ? stage : undefined}
-        />
+        <FlowTopology layers={layers} activeIndex={running ? stage : activeLayer} />
         <div className="ai-layer-inspector">
           {layers.map((layer, index) => (
             <button
