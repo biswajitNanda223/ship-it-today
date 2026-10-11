@@ -1865,20 +1865,26 @@ footer > span {
   backdrop-filter: blur(12px);
   animation: fadeIn 0.25s;
 }
+.mission-frame {
+  position: relative;
+  width: min(880px, 100%);
+}
 .overlay-close {
-  position: fixed;
-  right: 25px;
-  top: 20px;
-  border: 1px solid #ffffff2a;
-  background: #ffffff0b;
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  top: -54px;
+  border: 2px solid white;
+  background: var(--ink);
   color: white;
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   font-size: 23px;
   cursor: pointer;
+  box-shadow: 4px 4px 0 var(--lime);
 }
 .mission-modal {
-  width: min(880px, 100%);
+  width: 100%;
   min-height: 540px;
   display: grid;
   grid-template-columns: 310px 1fr;
@@ -2236,9 +2242,8 @@ footer > span {
     font-size: 29px;
   }
   .overlay-close {
-    z-index: 2;
-    right: 14px;
-    top: 12px;
+    right: 10px;
+    top: 10px;
   }
 }
 
@@ -9697,5 +9702,130 @@ body {
   .graffiti-atmosphere,
   .graffiti-world .motion-spotlight {
     display: none;
+  }
+}
+
+/* Alignment pass: reserve room for shadows and keep controls attached */
+.graffiti-world :is(.track-grid, .academy-track-grid, .lesson-grid) {
+  gap: 28px;
+}
+.graffiti-world .deep-dives > div {
+  gap: 24px;
+}
+.graffiti-world :is(.api-catalog, .ai-checklist, .ood-blueprint) {
+  gap: 20px;
+}
+.graffiti-world .lesson-grid {
+  align-items: stretch;
+}
+.graffiti-world .lesson-card {
+  height: 100%;
+}
+.graffiti-world .lesson-card > article {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+.graffiti-world .lesson-card article > span {
+  margin-top: auto;
+  padding-top: 12px;
+}
+.graffiti-world .lesson-outcomes .lesson-outcome {
+  border-width: 0 1px 0 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.graffiti-world .lesson-outcomes .lesson-outcome:last-child {
+  border-right: 0;
+}
+.graffiti-world .mission-frame {
+  filter: drop-shadow(12px 14px 0 #7445ff);
+}
+.graffiti-world .mission-modal {
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 4px 18px 5px 12px;
+  box-shadow: none;
+}
+.graffiti-world .overlay-close {
+  display: grid;
+  place-items: center;
+  padding: 0 0 3px;
+  border-radius: 3px 9px 3px 7px;
+  line-height: 1;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.graffiti-world .overlay-close:hover {
+  background: var(--orange);
+  box-shadow: 6px 6px 0 var(--lime);
+  transform: translate(-2px, -2px) rotate(-3deg);
+}
+
+@media (max-width: 760px) {
+  .graffiti-world :is(.track-grid, .academy-track-grid, .lesson-grid) {
+    gap: 30px;
+  }
+  .graffiti-world .deep-dives > div {
+    gap: 28px;
+  }
+  .graffiti-world .track-path {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .graffiti-world .track-path > div {
+    min-width: 0;
+    padding: 22px;
+    scroll-snap-align: none;
+  }
+  .graffiti-world .track-path > i {
+    min-width: 0;
+    justify-self: center;
+    padding: 2px 0;
+    animation: arrowDrop 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    transform: rotate(90deg);
+  }
+  .graffiti-world .lesson-outcomes {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+  .graffiti-world .lesson-outcomes .lesson-outcome {
+    min-width: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    scroll-snap-align: none;
+  }
+  .graffiti-world .lesson-outcomes .lesson-outcome:last-child {
+    border-bottom: 0;
+  }
+  .graffiti-world .mission-frame {
+    width: min(100%, 560px);
+    filter: drop-shadow(6px 7px 0 #7445ff);
+  }
+  .graffiti-world .mission-modal {
+    max-height: calc(100vh - 16px);
+    overscroll-behavior: contain;
+  }
+  .graffiti-world .overlay-close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+}
+
+@keyframes arrowDrop {
+  0%,
+  100% {
+    transform: translateY(-2px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(5px) rotate(90deg);
   }
 }

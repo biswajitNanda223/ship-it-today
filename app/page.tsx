@@ -1065,62 +1065,64 @@ export default function Home() {
           aria-modal="true"
           aria-label="Interactive mission"
         >
-          <button
-            className="overlay-close"
-            onClick={() => setMission(null)}
-            aria-label="Close mission"
-          >
-            ×
-          </button>
-          <div className="mission-modal">
-            <div className="mission-side">
-              <span>MISSION 01</span>
-              <b>{missionSteps[mission].reward}</b>
-              <div className="mission-orb">
-                <i />
-                <i />
-                <i />
-                <strong>{mission.toUpperCase()}</strong>
+          <div className="mission-frame">
+            <button
+              className="overlay-close"
+              onClick={() => setMission(null)}
+              aria-label="Close mission"
+            >
+              ×
+            </button>
+            <div className="mission-modal">
+              <div className="mission-side">
+                <span>MISSION 01</span>
+                <b>{missionSteps[mission].reward}</b>
+                <div className="mission-orb">
+                  <i />
+                  <i />
+                  <i />
+                  <strong>{mission.toUpperCase()}</strong>
+                </div>
+                <p>Interactive challenge</p>
               </div>
-              <p>Interactive challenge</p>
-            </div>
-            <div className="mission-content">
-              <small>FIELD EXERCISE · {missionStep + 1}/3</small>
-              <h2>{missionSteps[mission].title}</h2>
-              <p>{missionSteps[mission].brief}</p>
-              <div className="mission-progress">
-                <i style={{ width: `${((missionStep + 1) / 3) * 100}%` }} />
+              <div className="mission-content">
+                <small>FIELD EXERCISE · {missionStep + 1}/3</small>
+                <h2>{missionSteps[mission].title}</h2>
+                <p>{missionSteps[mission].brief}</p>
+                <div className="mission-progress">
+                  <i style={{ width: `${((missionStep + 1) / 3) * 100}%` }} />
+                </div>
+                <div className="task-list">
+                  {missionSteps[mission].tasks.map((task, index) => (
+                    <button
+                      key={task}
+                      className={index <= missionStep ? "done" : ""}
+                      onClick={() => setMissionStep(index)}
+                    >
+                      <i>{index < missionStep ? "✓" : index === missionStep ? "→" : index + 1}</i>
+                      <span>
+                        <b>{task}</b>
+                        <small>
+                          {index === missionStep
+                            ? "CURRENT OBJECTIVE"
+                            : index < missionStep
+                              ? "COMPLETE"
+                              : "LOCKED"}
+                        </small>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <button
+                  className="mission-next"
+                  onClick={() =>
+                    missionStep < 2 ? setMissionStep((value) => value + 1) : finishMission()
+                  }
+                >
+                  {missionStep < 2 ? "Complete objective" : "Finish mission"}
+                  <span>→</span>
+                </button>
               </div>
-              <div className="task-list">
-                {missionSteps[mission].tasks.map((task, index) => (
-                  <button
-                    key={task}
-                    className={index <= missionStep ? "done" : ""}
-                    onClick={() => setMissionStep(index)}
-                  >
-                    <i>{index < missionStep ? "✓" : index === missionStep ? "→" : index + 1}</i>
-                    <span>
-                      <b>{task}</b>
-                      <small>
-                        {index === missionStep
-                          ? "CURRENT OBJECTIVE"
-                          : index < missionStep
-                            ? "COMPLETE"
-                            : "LOCKED"}
-                      </small>
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <button
-                className="mission-next"
-                onClick={() =>
-                  missionStep < 2 ? setMissionStep((value) => value + 1) : finishMission()
-                }
-              >
-                {missionStep < 2 ? "Complete objective" : "Finish mission"}
-                <span>→</span>
-              </button>
             </div>
           </div>
         </div>
