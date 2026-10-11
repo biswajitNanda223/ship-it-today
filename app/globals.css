@@ -688,12 +688,21 @@ input[type="range"]::-webkit-slider-thumb {
   border-bottom: 1px solid #ffffff14;
   background: repeating-linear-gradient(to bottom, transparent 0, transparent 64px, #ffffff0c 65px);
 }
+.chart:after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  bottom: 20px;
+  height: var(--latency-y, 30%);
+  border-left: 1px dashed #9d84ff55;
+  pointer-events: none;
+}
 .area-chart {
   position: absolute;
   left: 20px;
   right: 10px;
   bottom: 20px;
-  height: min(calc(var(--load) * 1.8), 190px);
+  height: var(--load-height, 80px);
   background: linear-gradient(180deg, #774cff70, transparent);
   clip-path: polygon(
     0 86%,
@@ -711,17 +720,38 @@ input[type="range"]::-webkit-slider-thumb {
   border-top: 2px solid #8765ff;
   transition: height 0.25s;
 }
-.chart-dot {
+.chart-marker {
   position: absolute;
-  right: 5px;
-  bottom: calc(min(var(--load), 90%) * 1.7);
+  z-index: 3;
+  right: 4px;
+  bottom: var(--latency-y, 30%);
+  display: grid;
+  place-items: center;
+  transition: bottom 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.chart-marker i {
   width: 9px;
   height: 9px;
   border: 2px solid white;
   background: var(--purple);
   border-radius: 50%;
   box-shadow: 0 0 13px #9d84ff;
-  transition: 0.25s bottom;
+  position: relative;
+  z-index: 1;
+}
+.chart-marker span {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  min-width: max-content;
+  border: 1px solid #9277e84d;
+  border-radius: 3px;
+  background: #211a2de8;
+  color: #d9ceff;
+  padding: 5px 7px;
+  font: 7px var(--mono);
+  box-shadow: 0 6px 18px #0004;
 }
 .threshold {
   position: absolute;
@@ -3551,6 +3581,29 @@ footer > span {
   border-left: 1px solid #d2ccc1;
   background: repeating-linear-gradient(to bottom, transparent 0, transparent 70px, #7771 71px);
   overflow: hidden;
+  isolation: isolate;
+}
+.live-graph:before {
+  content: "LATENCY / LOAD ENVELOPE";
+  position: absolute;
+  z-index: 2;
+  left: 14px;
+  top: 13px;
+  color: #8e8891;
+  font: 6px var(--mono);
+  letter-spacing: 0.12em;
+}
+.live-graph:after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: var(--graph-x, 40%);
+  bottom: 29px;
+  height: var(--graph-y, 30%);
+  border-left: 1px dashed #6c42ef36;
+  transition:
+    left 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .graph-threshold {
   position: absolute;
@@ -3558,16 +3611,25 @@ footer > span {
   right: 0;
   top: 32%;
   border-top: 1px dashed #ee5e5e;
-  color: #d44f4f;
-  text-align: right;
+  z-index: 2;
+}
+.graph-threshold span {
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  border-radius: 2px;
+  background: #fff5f2;
+  color: #c34e4e;
+  padding: 4px 6px;
   font: 6px var(--mono);
 }
 .graph-area {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 28px;
-  background: linear-gradient(180deg, #6c42ef55, transparent);
+  bottom: 29px;
+  height: var(--graph-y, 30%);
+  background: linear-gradient(180deg, #6c42ef48, #6c42ef0a 72%, transparent);
   clip-path: polygon(
     0 95%,
     10% 90%,
@@ -3581,24 +3643,56 @@ footer > span {
     100% 100%,
     0 100%
   );
-  transition: 0.3s height;
+  transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.live-graph > i {
+.graph-marker {
   position: absolute;
-  right: 2%;
+  z-index: 4;
+  left: var(--graph-x, 40%);
+  bottom: calc(var(--graph-y, 30%) + 29px);
+  transform: translate(-50%, 50%);
+  transition:
+    left 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    bottom 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.graph-marker > i {
+  display: block;
   width: 10px;
   height: 10px;
+  border: 2px solid white;
   border-radius: 50%;
   background: var(--purple);
   box-shadow: 0 0 14px var(--purple);
-  transition: 0.3s bottom;
 }
-.live-graph > span {
+.graph-marker > span {
   position: absolute;
-  right: 4%;
-  top: 10%;
-  font: 24px var(--mono);
+  left: 50%;
+  bottom: 17px;
+  min-width: max-content;
+  transform: translateX(-50%);
+  border: 1px solid #ded8ee;
+  border-radius: 3px;
+  background: #fff;
+  padding: 7px 9px;
+  box-shadow: 0 8px 22px #3d2d681c;
   color: var(--purple);
+}
+.graph-marker > span b {
+  font: 16px var(--mono);
+}
+.graph-marker > span small {
+  margin-left: 4px;
+  color: #837d88;
+  font: 6px var(--mono);
+}
+.graph-marker.low > span {
+  left: 14px;
+  transform: none;
+}
+.graph-marker.high > span {
+  right: 14px;
+  left: auto;
+  transform: none;
 }
 .live-graph footer {
   position: absolute;
@@ -6272,7 +6366,16 @@ body {
   text-align: center;
   font: 5px var(--mono);
   font-style: normal;
+  border-radius: 2px;
+  background: #f5f3ee;
   color: #5f5962;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.rest-chart > i:nth-of-type(3n) b,
+.rest-chart > i:last-of-type b,
+.rest-chart > i:hover b {
+  opacity: 1;
 }
 .chart-slo {
   position: absolute;
@@ -6943,7 +7046,15 @@ body {
   left: 50%;
   transform: translateX(-50%);
   font: 6px var(--mono);
+  border-radius: 2px;
+  background: white;
   color: var(--muted);
+  opacity: 0;
+}
+.api-spark-bars i:nth-of-type(3n) b,
+.api-spark-bars i:last-of-type b,
+.api-spark-bars i:hover b {
+  opacity: 1;
 }
 .api-observability > aside {
   display: grid;

@@ -46,3 +46,14 @@ test("server-renders the enhanced lesson experience", async () => {
   assert.match(html, /chapter-progress-rail/);
   assert.match(html, /COPY CODE|PRODUCTION EXAMPLE/);
 });
+
+test("server-renders bounded latency markers", async () => {
+  const response = await render("/learn/apis");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /class="live-graph"/);
+  assert.match(html, /class="graph-marker/);
+  assert.match(html, /ms p95/);
+  assert.doesNotMatch(html, /class="chart-dot"/);
+});

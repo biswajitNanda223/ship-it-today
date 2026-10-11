@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
 import { apiLessons } from "../academy-data";
 import { LearnNav } from "../LearnNav";
@@ -72,6 +73,8 @@ export default function ApiPage() {
     () => Math.round(18 + traffic * 1.7 + Math.pow(traffic / 100, 3) * 240),
     [traffic],
   );
+  const graphX = Math.min(94, Math.max(6, 6 + traffic * 0.88));
+  const graphY = Math.min(76, Math.max(14, latency / 3.5));
 
   function send() {
     setRunning(true);
@@ -206,11 +209,24 @@ export default function ApiPage() {
               </li>
             </ul>
           </div>
-          <div className="live-graph">
-            <div className="graph-threshold">SLO 200ms</div>
-            <div className="graph-area" style={{ height: `${Math.min(92, latency / 3)}%` }} />
-            <i style={{ bottom: `${Math.min(88, latency / 3)}%` }} />
-            <span>{latency}ms</span>
+          <div
+            className="live-graph"
+            style={{ "--graph-x": `${graphX}%`, "--graph-y": `${graphY}%` } as CSSProperties}
+          >
+            <div className="graph-threshold">
+              <span>SLO 200ms</span>
+            </div>
+            <div className="graph-area" />
+            <div
+              className={`graph-marker ${traffic < 25 ? "low" : traffic > 78 ? "high" : ""}`}
+              aria-label={`Current p95 latency ${latency} milliseconds at ${traffic} thousand requests per second`}
+            >
+              <i />
+              <span>
+                <b>{latency}</b>
+                <small>ms p95</small>
+              </span>
+            </div>
             <footer>
               <small>0</small>
               <small>25k</small>

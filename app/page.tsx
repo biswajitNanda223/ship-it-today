@@ -814,11 +814,19 @@ export default function Home() {
               </div>
               <div
                 className="chart"
-                style={{ "--load": `${metrics.utilization}%` } as React.CSSProperties}
+                style={
+                  {
+                    "--load-height": `${Math.min(190, metrics.utilization * 1.8)}px`,
+                    "--latency-y": `${Math.min(80, Math.max(12, metrics.latency / 3.75))}%`,
+                  } as React.CSSProperties
+                }
               >
                 <div className="threshold">200ms threshold</div>
                 <div className="area-chart" />
-                <div className="chart-dot" />
+                <div className="chart-marker" aria-label={`${metrics.latency} milliseconds p95`}>
+                  <i />
+                  <span>{metrics.latency}ms</span>
+                </div>
                 <div className="y-axis">
                   <span>300</span>
                   <span>200</span>

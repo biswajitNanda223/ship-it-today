@@ -228,7 +228,11 @@ export function PublicApiLab({ category }: { category: ApiCategory }) {
         </article>
         <div className="api-spark-bars">
           {latencies.map((latency, index) => (
-            <i key={`${index}-${latency}`} style={{ height: `${Math.max(14, latency)}%` }}>
+            <i
+              key={`${index}-${latency}`}
+              aria-label={`Request ${index + 1}: ${latency} milliseconds`}
+              style={{ height: `${Math.min(88, Math.max(14, latency))}%` }}
+            >
               <b>{latency}</b>
             </i>
           ))}

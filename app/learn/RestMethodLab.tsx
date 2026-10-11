@@ -160,7 +160,11 @@ export function RestMethodLab({ item }: { item: RestMethod }) {
           {samples.map((value, index) => (
             <i
               key={`${index}-${value}`}
-              style={{ height: `${Math.max(12, value)}%`, animationDelay: `${index * 35}ms` }}
+              aria-label={`Request ${index + 1}: ${value} milliseconds`}
+              style={{
+                height: `${Math.min(82, Math.max(12, value))}%`,
+                animationDelay: `${index * 35}ms`,
+              }}
             >
               <b>{value}</b>
             </i>
