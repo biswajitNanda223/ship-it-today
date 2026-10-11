@@ -12,7 +12,7 @@ export function MotionLayer() {
       ),
     ];
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const stopInView = targets.map((element) => {
+    const stopInView = targets.map((element, sectionIndex) => {
       if (reducedMotion) return () => undefined;
       return inView(
         element,
@@ -21,19 +21,25 @@ export function MotionLayer() {
             element,
             {
               opacity: [0.7, 1],
-              transform: ["translateY(30px) scale(.99)", "translateY(0px) scale(1)"],
+              transform: [
+                `translateY(34px) rotate(${sectionIndex % 2 ? "-0.35deg" : "0.35deg"}) scale(.99)`,
+                "translateY(0px) rotate(0deg) scale(1)",
+              ],
             },
             { duration: 0.78, ease: [0.16, 1, 0.3, 1] },
           );
           const cards = element.querySelectorAll<HTMLElement>(
-            ".lesson-card, .track-card, .deep-dives a, .ai-layer-inspector button, .ai-checklist article, .pattern-menu button, .chapter-points > div, .lesson-outcome",
+            ".lesson-card, .track-card, .track, .academy-track-grid > a, .deep-dives a, .api-catalog button, .ai-layer-inspector button, .ai-checklist article, .pattern-menu button, .chapter-points > div, .lesson-outcome, .ood-panel, .road",
           );
           if (cards.length) {
             animate(
               cards,
               {
                 opacity: [0.84, 1],
-                transform: ["translateY(16px) scale(.985)", "translateY(0px) scale(1)"],
+                transform: [
+                  "translateY(18px) rotate(-0.6deg) scale(.985)",
+                  "translateY(0px) rotate(0deg) scale(1)",
+                ],
               },
               { duration: 0.58, delay: stagger(0.055), ease: [0.16, 1, 0.3, 1] },
             );
@@ -62,6 +68,10 @@ export function MotionLayer() {
         );
         document.documentElement.style.setProperty("--scroll-y", `${scrollY}px`);
         document.documentElement.style.setProperty("--scroll-drift", `${delta}px`);
+        document.documentElement.style.setProperty(
+          "--graffiti-drift",
+          `${(scrollY * 0.075) % 720}px`,
+        );
         previous = scrollY;
       });
     };
@@ -78,7 +88,7 @@ export function MotionLayer() {
         const card =
           event.target instanceof Element
             ? event.target.closest<HTMLElement>(
-                ".lesson-card, .academy-track-grid > a, .deep-dives a, .track-card",
+                ".lesson-card, .academy-track-grid > a, .deep-dives a, .track-card, .track, .ood-panel, .api-catalog button",
               )
             : null;
         if (!card) return;
@@ -101,6 +111,12 @@ export function MotionLayer() {
       <div className="scroll-progress" aria-hidden="true" />
       <div className="ambient-beam" aria-hidden="true" />
       <div className="motion-spotlight" aria-hidden="true" />
+      <div className="graffiti-atmosphere" aria-hidden="true">
+        <i className="graffiti-slash slash-one" />
+        <i className="graffiti-slash slash-two" />
+        <span className="graffiti-tag tag-build">BUILD / BREAK / SCALE</span>
+        <span className="graffiti-tag tag-ship">SHIP IT ↗</span>
+      </div>
     </>
   );
 }

@@ -13,6 +13,7 @@ export function TrackHub({
   description,
   lessons,
   extra,
+  themeClass,
 }: {
   eyebrow: string;
   title: string;
@@ -20,9 +21,10 @@ export function TrackHub({
   description: string;
   lessons: Lesson[];
   extra?: ReactNode;
+  themeClass?: string;
 }) {
   return (
-    <main className="course-page track-hub">
+    <main className={`course-page track-hub${themeClass ? ` ${themeClass}` : ""}`}>
       <LearnNav />
       <header className="track-hub-hero shell">
         <span className="course-index">{eyebrow}</span>

@@ -9050,3 +9050,652 @@ body {
     transition: none;
   }
 }
+
+/* Global graffiti engineering world */
+.graffiti-world {
+  --ink: #111014;
+  --muted: #625d68;
+  --paper: #f2efe5;
+  --purple: #7445ff;
+  --lime: #cfff45;
+  --orange: #ff6738;
+  --cyan: #3fe1f2;
+  --line: #c9c2b6;
+  --dark: #121015;
+  background-color: var(--paper);
+  background-image:
+    repeating-linear-gradient(103deg, transparent 0 78px, #12101508 79px 80px),
+    linear-gradient(115deg, #ffffff72, transparent 34%, #7445ff0a 70%, transparent);
+}
+.graffiti-world main {
+  position: relative;
+  z-index: 1;
+}
+.graffiti-world main::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 5px, #11101408 6px 7px),
+    linear-gradient(
+      90deg,
+      transparent 0 6%,
+      #ff67380c 6% 6.3%,
+      transparent 6.3% 94%,
+      #7445ff0c 94% 94.3%,
+      transparent 94.3%
+    );
+  content: "";
+  opacity: 0.48;
+}
+.graffiti-world ::selection {
+  background: var(--lime);
+  color: var(--ink);
+  text-shadow: none;
+}
+.graffiti-atmosphere {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.graffiti-slash {
+  position: absolute;
+  width: 210px;
+  height: 16px;
+  background: var(--orange);
+  box-shadow:
+    0 22px 0 -6px var(--purple),
+    0 40px 0 -10px var(--ink);
+  opacity: 0.15;
+  clip-path: polygon(0 31%, 94% 0, 100% 67%, 7% 100%);
+  will-change: transform;
+}
+.slash-one {
+  right: -80px;
+  top: 18vh;
+  transform: translate3d(0, calc(var(--scroll-drift, 0px) * 0.35), 0) rotate(-18deg);
+}
+.slash-two {
+  bottom: 12vh;
+  left: -96px;
+  transform: translate3d(0, calc(var(--scroll-drift, 0px) * -0.3), 0) rotate(14deg);
+}
+.graffiti-tag {
+  position: absolute;
+  color: #11101418;
+  font:
+    900 clamp(38px, 7vw, 104px)/0.78 var(--font-sans),
+    sans-serif;
+  letter-spacing: -0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  will-change: transform;
+}
+.tag-build {
+  top: 18%;
+  left: 5px;
+  transform: translate3d(0, calc(var(--graffiti-drift, 0px) * -0.18), 0) rotate(180deg);
+}
+.tag-ship {
+  right: 5px;
+  bottom: 4%;
+  transform: translate3d(0, calc(var(--graffiti-drift, 0px) * 0.12), 0);
+}
+.graffiti-world .scroll-progress {
+  height: 7px;
+  background: linear-gradient(90deg, var(--lime), var(--orange) 55%, var(--purple));
+  box-shadow: 0 2px 0 var(--ink);
+  clip-path: polygon(0 0, 100% 0, 99.6% 74%, 0.4% 100%);
+}
+.graffiti-world .ambient-beam {
+  opacity: 0.24;
+  background: linear-gradient(
+    100deg,
+    transparent 16%,
+    #7445ff36 45%,
+    #cfff4529 53%,
+    transparent 78%
+  );
+  transform: translate3d(0, calc(var(--scroll-y, 0px) * 0.035), 0) skewY(-4deg);
+}
+.graffiti-world .motion-spotlight {
+  width: 360px;
+  height: 360px;
+  border-radius: 38% 62% 47% 53%;
+  opacity: 0.26;
+  background: radial-gradient(ellipse at 42% 48%, #cfff4552 0 7%, #7445ff28 32%, transparent 67%);
+  mix-blend-mode: multiply;
+}
+
+/* Marker typography and navigation */
+.graffiti-world
+  :is(
+    .hero h1,
+    .section-head h2,
+    .roadmap-copy h2,
+    .final-cta h2,
+    .course-hero h1,
+    .academy-hero h1,
+    .track-hub-hero h1,
+    .academy-lesson-hero h1,
+    .public-api-hero h1,
+    .genai-hero h1
+  ) {
+  text-wrap: balance;
+  text-shadow: 3px 3px 0 #cfff458c;
+}
+.graffiti-world
+  :is(
+    .hero h1,
+    .section-head h2,
+    .roadmap-copy h2,
+    .final-cta h2,
+    .course-hero h1,
+    .academy-hero h1,
+    .track-hub-hero h1,
+    .academy-lesson-hero h1,
+    .public-api-hero h1,
+    .genai-hero h1
+  )
+  em {
+  position: relative;
+  display: inline-block;
+  color: var(--purple);
+  font-family: var(--font-sans), sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  transform: rotate(-1.1deg);
+}
+.graffiti-world :is(.hero h1, .section-head h2, .roadmap-copy h2, .final-cta h2) em::after {
+  position: absolute;
+  right: -2%;
+  bottom: -8px;
+  left: 1%;
+  height: 9px;
+  background: var(--orange);
+  clip-path: polygon(0 38%, 96% 0, 100% 54%, 2% 100%);
+  content: "";
+  opacity: 0.78;
+  transform: scaleX(0.86) rotate(-1deg);
+  transform-origin: left;
+  animation: graffitiUnderline 4.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.graffiti-world :is(.eyebrow, .kicker, .course-index, .academy-breadcrumb, .player-topbar b) {
+  width: fit-content;
+  padding: 7px 10px;
+  border: 1px solid var(--ink);
+  background: var(--lime);
+  color: var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  transform: rotate(-0.7deg);
+}
+.graffiti-world .hero .eyebrow {
+  margin-inline: auto;
+}
+.graffiti-world :is(.nav, .learn-nav) {
+  position: relative;
+  z-index: 20;
+  border-bottom: 2px solid var(--ink);
+}
+.graffiti-world :is(.nav, .learn-nav)::after {
+  position: absolute;
+  right: 5%;
+  bottom: -7px;
+  width: 92px;
+  height: 12px;
+  background: var(--orange);
+  clip-path: polygon(0 30%, 100% 0, 94% 70%, 6% 100%);
+  content: "";
+}
+.graffiti-world .brand-mark {
+  border: 2px solid var(--ink);
+  border-radius: 8px 2px 10px 3px;
+  box-shadow: 5px 5px 0 var(--lime);
+  transform: rotate(-4deg);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.graffiti-world .brand:hover .brand-mark {
+  transform: rotate(5deg) scale(1.08);
+}
+.graffiti-world :is(.nav-cta, .back-home) {
+  border: 2px solid var(--ink);
+  border-radius: 2px 9px 3px 7px;
+  box-shadow: 4px 4px 0 var(--lime);
+}
+
+/* Graffiti panels across every route */
+.graffiti-world
+  :is(
+    .world,
+    .api-window,
+    .api-masterclass,
+    .lab-panel,
+    .architecture-stage,
+    .lesson-player,
+    .lesson-body,
+    .track-path,
+    .lesson-outcomes,
+    .hub-callout,
+    .ddia-studio,
+    .request-studio,
+    .pattern-workbench,
+    .ai-architecture,
+    .public-api-workbench,
+    .rest-contract,
+    .rest-performance,
+    .trading-terminal
+  ) {
+  border: 2px solid var(--ink);
+  border-radius: 3px 16px 4px 12px;
+  box-shadow: 9px 9px 0 #111014;
+}
+.graffiti-world
+  :is(
+    .track,
+    .lesson-card,
+    .academy-track-grid > a,
+    .deep-dives a,
+    .track-card,
+    .ood-panel,
+    .ai-checklist article,
+    .pattern-menu button,
+    .api-catalog button,
+    .lesson-outcome
+  ) {
+  border-color: var(--ink);
+  border-width: 2px;
+  border-radius: 3px 13px 4px 9px;
+  box-shadow: 5px 6px 0 #111014;
+  transition:
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease;
+}
+.graffiti-world
+  :is(
+    .track,
+    .lesson-card,
+    .academy-track-grid > a,
+    .deep-dives a,
+    .track-card,
+    .ood-panel,
+    .api-catalog button
+  ):nth-child(odd) {
+  transform: rotate(-0.32deg);
+}
+.graffiti-world
+  :is(
+    .track,
+    .lesson-card,
+    .academy-track-grid > a,
+    .deep-dives a,
+    .track-card,
+    .ood-panel,
+    .api-catalog button
+  ):nth-child(even) {
+  transform: rotate(0.32deg);
+}
+.graffiti-world
+  :is(
+    .track,
+    .lesson-card,
+    .academy-track-grid > a,
+    .deep-dives a,
+    .track-card,
+    .ood-panel,
+    .api-catalog button
+  ):hover {
+  z-index: 3;
+  box-shadow: 11px 12px 0 var(--purple);
+  transform: translate(-3px, -5px) rotate(-0.5deg);
+}
+.graffiti-world
+  :is(
+    .track,
+    .lesson-card,
+    .academy-track-grid > a,
+    .deep-dives a,
+    .track-card,
+    .ood-panel
+  )::before {
+  position: absolute;
+  z-index: 5;
+  top: -9px;
+  left: 14%;
+  width: 52px;
+  height: 15px;
+  background: #d7ff6dba;
+  clip-path: polygon(4% 10%, 100% 0, 95% 88%, 0 100%);
+  content: "";
+  pointer-events: none;
+  transform: rotate(-3deg);
+}
+.graffiti-world .lesson-card-visual::before {
+  background-image:
+    linear-gradient(#11101418 1px, transparent 1px),
+    linear-gradient(90deg, #11101418 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: linear-gradient(to bottom, #000, transparent 92%);
+}
+.graffiti-world :is(.track-icon, .lesson-card-visual > b, .academy-track-grid header span) {
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--orange);
+}
+.graffiti-world :is(.tag, .xp-pill, .method, .academy-track-grid header i, .ood-patterns b) {
+  border-radius: 2px 7px 2px 5px;
+}
+
+/* Buttons become pasted call-to-action labels */
+.graffiti-world
+  :is(
+    .button,
+    .track-link,
+    .mission-next,
+    .chapter-next,
+    .chapter-previous,
+    .ood-request-line button,
+    .network-request button,
+    .request-bar button,
+    .api-detail button,
+    .public-api-workbench button
+  ) {
+  position: relative;
+  border: 2px solid var(--ink);
+  border-radius: 2px 9px 3px 7px;
+  box-shadow: 4px 5px 0 var(--ink);
+  transition:
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.22s ease,
+    color 0.2s ease;
+}
+.graffiti-world
+  :is(
+    .button,
+    .track-link,
+    .mission-next,
+    .chapter-next,
+    .chapter-previous,
+    .ood-request-line button,
+    .network-request button,
+    .request-bar button,
+    .api-detail button,
+    .public-api-workbench button
+  ):not(:disabled):hover {
+  box-shadow: 7px 8px 0 var(--purple);
+  transform: translate(-2px, -3px) rotate(-0.6deg);
+}
+.graffiti-world :is(button, a):focus-visible {
+  outline: 4px solid var(--orange);
+  outline-offset: 4px;
+}
+
+/* Real directional motion for architecture and API flows */
+.graffiti-world .joint-stage {
+  overflow: hidden;
+  border: 2px solid #0f0d12;
+  border-radius: 4px 18px 5px 12px;
+  background: linear-gradient(120deg, #17131f, #21182c 56%, #151219), var(--dark);
+  box-shadow: inset 0 0 0 5px #ffffff08;
+}
+.graffiti-world .joint-stage::before {
+  position: absolute;
+  z-index: 0;
+  top: 18px;
+  right: -20px;
+  width: 170px;
+  height: 18px;
+  background: var(--orange);
+  clip-path: polygon(0 34%, 100% 0, 91% 74%, 7% 100%);
+  content: "";
+  opacity: 0.55;
+  transform: rotate(-8deg);
+}
+.graffiti-world .joint-paper .joint-system-node {
+  filter: drop-shadow(6px 7px 0 #09070b);
+  transition: filter 0.25s ease;
+}
+.graffiti-world .joint-paper .joint-system-node:hover {
+  filter: drop-shadow(9px 10px 0 #7445ff);
+}
+.graffiti-world .joint-paper .joint-animated-link {
+  stroke: var(--lime) !important;
+  stroke-dasharray: 14 7;
+  animation: graffitiRoute 1.15s linear infinite;
+  filter: drop-shadow(0 0 4px #cfff4566);
+}
+.graffiti-world .joint-legend {
+  border-top: 2px solid #ffffff20;
+  background: #0e0c11;
+}
+.graffiti-world .request-flow i,
+.graffiti-world .track-path > i {
+  color: var(--orange);
+  animation: arrowKick 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+.graffiti-world
+  :is(.academy-code, .api-code, .request-editor, .response-viewer, .ood-api-console pre, pre) {
+  scrollbar-width: none;
+}
+.graffiti-world :is(.academy-code, .api-code, .request-editor, .response-viewer) {
+  border: 2px solid var(--ink);
+  border-radius: 2px 13px 3px 8px;
+  box-shadow: 8px 9px 0 var(--purple);
+}
+.graffiti-world .chapter-progress-rail i {
+  height: 6px;
+  background: #d0c9bd;
+  clip-path: polygon(0 18%, 100% 0, 98% 82%, 2% 100%);
+}
+.graffiti-world .chapter-progress-rail i::after {
+  background: linear-gradient(90deg, var(--orange), var(--purple), var(--lime));
+}
+
+/* Home world and charts */
+.graffiti-world .world {
+  background:
+    linear-gradient(110deg, #fefcf5e8, #ede6ffdc),
+    repeating-linear-gradient(90deg, transparent 0 41px, #1110140d 42px 43px);
+  transform: rotate(-0.18deg);
+}
+.graffiti-world .world::after {
+  position: absolute;
+  z-index: 1;
+  right: 2%;
+  bottom: 15%;
+  width: 96px;
+  height: 10px;
+  background: var(--orange);
+  box-shadow: 16px 17px 0 -2px var(--purple);
+  clip-path: polygon(0 44%, 100% 0, 92% 74%, 4% 100%);
+  content: "";
+  pointer-events: none;
+  transform: rotate(-12deg);
+}
+.graffiti-world .node {
+  border: 2px solid var(--ink);
+  border-radius: 3px 10px 4px 8px;
+  box-shadow: 5px 6px 0 var(--ink);
+}
+.graffiti-world .node:hover,
+.graffiti-world .node.selected {
+  box-shadow: 8px 9px 0 var(--purple);
+  transform: translate(-2px, -5px) rotate(-1deg);
+}
+.graffiti-world :is(.chart, .live-graph, .rest-chart, .trading-chart) {
+  border: 2px solid var(--ink);
+  background-color: #f8f5eb;
+  background-image:
+    linear-gradient(#11101412 1px, transparent 1px),
+    linear-gradient(90deg, #11101412 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+.graffiti-world :is(.chart-marker, .graph-marker) i {
+  border: 3px solid var(--ink);
+  box-shadow: 0 0 0 5px var(--lime);
+}
+
+/* OOD's moving wall tag now belongs to the complete site system */
+.ood-graffiti-band {
+  overflow: hidden;
+  border-block: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--lime);
+  transform: rotate(-0.5deg) scale(1.01);
+}
+.ood-graffiti-band > div {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 0;
+  font:
+    900 19px/1 var(--font-sans),
+    sans-serif;
+  letter-spacing: -0.04em;
+  animation: wallTag 18s linear infinite;
+}
+.ood-graffiti-band i {
+  color: var(--orange);
+  font-style: normal;
+}
+.graffiti-world .ood-pattern-panel {
+  background: var(--lime);
+}
+.graffiti-world .ood-api-console {
+  background: #121015;
+  box-shadow: 9px 10px 0 var(--orange);
+}
+
+@keyframes graffitiRoute {
+  to {
+    stroke-dashoffset: -42;
+  }
+}
+@keyframes graffitiUnderline {
+  0%,
+  18% {
+    transform: scaleX(0) rotate(-1deg);
+  }
+  38%,
+  82% {
+    transform: scaleX(1) rotate(-1deg);
+  }
+  100% {
+    transform: scaleX(0) rotate(-1deg);
+    transform-origin: right;
+  }
+}
+@keyframes arrowKick {
+  0%,
+  100% {
+    transform: translateX(0) rotate(-4deg);
+  }
+  48% {
+    transform: translateX(7px) rotate(2deg);
+  }
+}
+@keyframes wallTag {
+  to {
+    transform: translateX(-42%);
+  }
+}
+
+@media (max-width: 760px) {
+  .graffiti-world .shell {
+    width: min(100% - 24px, 1180px);
+  }
+  .graffiti-tag,
+  .graffiti-slash,
+  .graffiti-world .ambient-beam {
+    display: none;
+  }
+  .graffiti-world :is(.nav, .learn-nav)::after {
+    right: 10px;
+    width: 58px;
+  }
+  .graffiti-world
+    :is(
+      .hero h1,
+      .section-head h2,
+      .roadmap-copy h2,
+      .final-cta h2,
+      .course-hero h1,
+      .academy-hero h1,
+      .track-hub-hero h1,
+      .academy-lesson-hero h1,
+      .public-api-hero h1,
+      .genai-hero h1
+    ) {
+    text-shadow: 2px 2px 0 #cfff458c;
+  }
+  .graffiti-world
+    :is(
+      .world,
+      .api-window,
+      .api-masterclass,
+      .lab-panel,
+      .architecture-stage,
+      .lesson-player,
+      .lesson-body,
+      .track-path,
+      .lesson-outcomes,
+      .hub-callout,
+      .ddia-studio,
+      .request-studio,
+      .pattern-workbench,
+      .ai-architecture,
+      .public-api-workbench,
+      .rest-contract,
+      .rest-performance,
+      .trading-terminal
+    ) {
+    box-shadow: 5px 6px 0 var(--ink);
+  }
+  .graffiti-world
+    :is(
+      .track,
+      .lesson-card,
+      .academy-track-grid > a,
+      .deep-dives a,
+      .track-card,
+      .ood-panel,
+      .api-catalog button
+    ):nth-child(n) {
+    transform: none;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .graffiti-world
+    :is(
+      .track,
+      .lesson-card,
+      .academy-track-grid > a,
+      .deep-dives a,
+      .track-card,
+      .ood-panel,
+      .api-catalog button
+    ):hover {
+    box-shadow: 5px 6px 0 #111014;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .graffiti-world *,
+  .graffiti-world *::before,
+  .graffiti-world *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .graffiti-atmosphere,
+  .graffiti-world .motion-spotlight {
+    display: none;
+  }
+}

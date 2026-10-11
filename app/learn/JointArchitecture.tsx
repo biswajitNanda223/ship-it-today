@@ -9,10 +9,12 @@ export function JointArchitecture({
   nodes,
   kind,
   activeFrame,
+  theme,
 }: {
   nodes: Node[];
   kind: DiagramKind;
   activeFrame?: number;
+  theme?: "graffiti";
 }) {
   const host = useRef<HTMLDivElement>(null);
   const graphRef = useRef<import("@joint/core").dia.Graph | null>(null);
@@ -179,8 +181,10 @@ export function JointArchitecture({
     });
   }, [activeFrame, ready]);
 
+  const visualTheme = theme ?? "graffiti";
+
   return (
-    <div className="joint-stage">
+    <div className={`joint-stage joint-${visualTheme}`}>
       <div ref={host} className="joint-paper" aria-hidden="true" />
       <ol className="sr-diagram">
         {nodes.map((node) => (

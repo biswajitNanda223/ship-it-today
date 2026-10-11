@@ -997,26 +997,32 @@ export default function Home() {
             <p>UML, SOLID, patterns, and TypeScript.</p>
             <span>Open track →</span>
           </Link>
+          <Link href="/learn/ood">
+            <small>PYTHON / 03</small>
+            <b>OOD Interview Lab</b>
+            <p>Eleven object-design cases with FastAPI.</p>
+            <span>Open lab →</span>
+          </Link>
           <Link href="/learn/diagrams">
-            <small>MODELS / 03</small>
+            <small>MODELS / 04</small>
             <b>Diagram Studio</b>
             <p>Class, sequence, DFD, ERD, and state models.</p>
             <span>Open track →</span>
           </Link>
           <Link href="/learn/apis">
-            <small>REST / 04</small>
+            <small>REST / 05</small>
             <b>Complete API Laboratory</b>
             <p>Every method, security, testing, and graphs.</p>
             <span>Open track →</span>
           </Link>
           <Link href="/learn/ddia">
-            <small>DATA / 05</small>
+            <small>DATA / 06</small>
             <b>DDIA Study Guide</b>
             <p>Storage, replication, transactions, streams.</p>
             <span>Open guide →</span>
           </Link>
           <Link href="/learn/genai">
-            <small>GENAI / 06</small>
+            <small>GENAI / 07</small>
             <b>GenAI Backend Design</b>
             <p>RAG, agents, streaming, safety, and evals.</p>
             <span>Open studio →</span>

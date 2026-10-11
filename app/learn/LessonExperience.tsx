@@ -10,7 +10,13 @@ const routeFor = (track: Lesson["track"], slug: string) =>
   `/learn/${track === "API" ? "apis" : track === "DIAGRAM" ? "diagrams" : track.toLowerCase()}/${slug}`;
 
 function ArchitectureDiagram({ lesson }: { lesson: Lesson }) {
-  return <JointArchitecture nodes={lesson.nodes} kind={lesson.diagram} />;
+  return (
+    <JointArchitecture
+      nodes={lesson.nodes}
+      kind={lesson.diagram}
+      theme={lesson.track === "OOD" ? "graffiti" : undefined}
+    />
+  );
 }
 
 export function LessonExperience({ lesson, siblings }: { lesson: Lesson; siblings: Lesson[] }) {
@@ -35,7 +41,7 @@ export function LessonExperience({ lesson, siblings }: { lesson: Lesson; sibling
   };
 
   return (
-    <main className="course-page academy-lesson">
+    <main className={`course-page academy-lesson${lesson.track === "OOD" ? " ood-theme" : ""}`}>
       <LearnNav />
       <header className="academy-lesson-hero shell">
         <div className="academy-breadcrumb">

@@ -32,6 +32,9 @@ test("server-renders the Ship It Today learning world", async () => {
   assert.match(html, /Design it.*Scale it.*Ship it/s);
   assert.match(html, /Go deeper\. Build the mental model\./);
   assert.match(html, /class="motion-spotlight"/);
+  assert.match(html, /graffiti-world/);
+  assert.match(html, /class="graffiti-atmosphere"/);
+  assert.match(html, /OOD Interview Lab/);
   assert.doesNotMatch(html, /codex-preview|Building your site/);
 });
 

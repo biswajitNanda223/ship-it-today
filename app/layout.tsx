@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geist.variable} ${mono.variable}`}>
+      <body className={`${geist.variable} ${mono.variable} graffiti-world`}>
         <MotionLayer />
         {children}
       </body>
