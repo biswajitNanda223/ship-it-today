@@ -27,7 +27,10 @@ export function MotionLayer() {
           if (cards.length) {
             animate(
               cards,
-              { opacity: [0.84, 1], transform: ["translateY(16px) scale(.985)", "none"] },
+              {
+                opacity: [0.84, 1],
+                transform: ["translateY(16px) scale(.985)", "translateY(0px) scale(1)"],
+              },
               { duration: 0.5, delay: stagger(0.045), ease: [0.22, 1, 0.36, 1] },
             );
           }
