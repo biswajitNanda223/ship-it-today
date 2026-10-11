@@ -1,15 +1,18 @@
 "use client";
 
 import {
+  Handle,
   MarkerType,
   Position,
   ReactFlow,
   type Edge,
   type Node,
   type NodeProps,
+  type ReactFlowInstance,
 } from "@xyflow/react";
 import { motion } from "motion/react";
 import { memo, useEffect, useMemo, useState } from "react";
+import styles from "./FlowTopology.module.css";
 
 type Layer = {
   name: string;
@@ -28,14 +31,16 @@ type LayerNode = Node<LayerData, "layer">;
 const DiagramNode = memo(function DiagramNode({ data }: NodeProps<LayerNode>) {
   return (
     <motion.article
-      className={data.active ? "flow-topology-node active" : "flow-topology-node"}
+      className={data.active ? `${styles.node} ${styles.active}` : styles.node}
       initial={{ opacity: 0, y: 14, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.45, delay: data.index * 0.06, ease: [0.22, 1, 0.36, 1] }}
     >
+      <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
       <span>{String(data.index + 1).padStart(2, "0")}</span>
       <b>{data.label}</b>
       <small>{data.detail}</small>
+      <Handle type="source" position={Position.Right} style={{ opacity: 0 }} />
     </motion.article>
   );
 });
@@ -44,6 +49,7 @@ const nodeTypes = { layer: DiagramNode };
 
 export function FlowTopology({ layers, activeIndex }: { layers: Layer[]; activeIndex?: number }) {
   const [compact, setCompact] = useState(false);
+  const [flowInstance, setFlowInstance] = useState<ReactFlowInstance<LayerNode, Edge> | null>(null);
 
   useEffect(() => {
     const query = window.matchMedia("(max-width: 720px)");
@@ -52,6 +58,14 @@ export function FlowTopology({ layers, activeIndex }: { layers: Layer[]; activeI
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
+
+  useEffect(() => {
+    if (!flowInstance) return;
+    const frame = window.requestAnimationFrame(() => {
+      void flowInstance.fitView({ padding: compact ? 0.12 : 0.18, duration: 350 });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [compact, flowInstance, layers.length]);
 
   const nodes = useMemo<LayerNode[]>(
     () =>
@@ -90,7 +104,16 @@ export function FlowTopology({ layers, activeIndex }: { layers: Layer[]; activeI
   );
 
   return (
-    <div className="flow-topology" aria-label="Interactive GenAI request architecture">
+    <div
+      className={`${styles.stage} flow-topology`}
+      aria-label="Interactive GenAI request architecture"
+      style={{
+        height: compact ? 570 : 470,
+        minHeight: compact ? 570 : 470,
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -106,8 +129,11 @@ export function FlowTopology({ layers, activeIndex }: { layers: Layer[]; activeI
         panOnScroll={false}
         zoomOnDoubleClick={false}
         proOptions={{ hideAttribution: true }}
+        onInit={setFlowInstance}
       />
-      <div className="flow-topology-hint">DRAG TO PAN · PINCH TO ZOOM · ARROWS SHOW DIRECTION</div>
+      <div className={`${styles.hint} flow-topology-hint`}>
+        DRAG TO PAN · PINCH TO ZOOM · ARROWS SHOW DIRECTION
+      </div>
     </div>
   );
 }

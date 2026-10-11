@@ -13,13 +13,12 @@ export function MotionLayer() {
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const stopInView = targets.map((element) => {
       if (reducedMotion) return () => undefined;
-      element.style.opacity = "0";
       return inView(
         element,
         () => {
           animate(
             element,
-            { opacity: [0, 1], transform: ["translateY(30px)", "translateY(0px)"] },
+            { opacity: [0.82, 1], transform: ["translateY(24px)", "translateY(0px)"] },
             { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
           );
           const cards = element.querySelectorAll<HTMLElement>(
@@ -28,7 +27,7 @@ export function MotionLayer() {
           if (cards.length) {
             animate(
               cards,
-              { opacity: [0, 1], transform: ["translateY(18px) scale(.985)", "none"] },
+              { opacity: [0.84, 1], transform: ["translateY(16px) scale(.985)", "none"] },
               { duration: 0.5, delay: stagger(0.045), ease: [0.22, 1, 0.36, 1] },
             );
           }
