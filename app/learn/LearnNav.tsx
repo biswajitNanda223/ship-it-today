@@ -7,6 +7,7 @@ const links = [
   ["Academy", "/learn"],
   ["HLD", "/learn/hld"],
   ["LLD", "/learn/lld"],
+  ["OOD Lab", "/learn/ood"],
   ["Public APIs", "/learn/public-apis"],
   ["Diagrams", "/learn/diagrams"],
   ["Data", "/learn/ddia"],

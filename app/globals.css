@@ -8817,3 +8817,236 @@ body {
     transition: none;
   }
 }
+
+/* Python OOD interview lab */
+.ood-blueprint {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.ood-panel {
+  position: relative;
+  overflow: hidden;
+  min-height: 260px;
+  padding: clamp(22px, 3vw, 36px);
+  border: 1px solid var(--line);
+  background: #f8f5ef;
+}
+.ood-panel > span,
+.ood-api-console header span {
+  display: block;
+  margin-bottom: 15px;
+  color: var(--purple);
+  font: 7px var(--mono);
+  letter-spacing: 0.16em;
+}
+.ood-panel h2 {
+  max-width: 440px;
+  margin: 0 0 24px;
+  font-size: clamp(22px, 3vw, 38px);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+.ood-requirements,
+.ood-contracts {
+  grid-column: span 6;
+}
+.ood-pattern-panel {
+  grid-column: span 4;
+  background: var(--lime);
+}
+.ood-api-console {
+  grid-column: span 8;
+  background: #151318;
+  color: #f7f3e9;
+}
+.ood-requirements ul {
+  display: grid;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: ood-requirement;
+}
+.ood-requirements li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  align-items: start;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.5;
+  counter-increment: ood-requirement;
+}
+.ood-requirements li::before {
+  content: "0" counter(ood-requirement);
+  color: var(--purple);
+  font: 7px var(--mono);
+}
+.ood-endpoints {
+  display: grid;
+  border-top: 1px solid var(--line);
+}
+.ood-endpoints > div {
+  display: grid;
+  grid-template-columns: 50px minmax(130px, 1fr) minmax(120px, 0.7fr);
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+}
+.ood-endpoints b,
+.ood-request-line > b {
+  width: fit-content;
+  padding: 5px 7px;
+  border-radius: 2px;
+  background: var(--ink);
+  color: var(--lime);
+  font: 7px var(--mono);
+}
+.ood-endpoints b[data-method="GET"] {
+  background: var(--purple);
+  color: white;
+}
+.ood-endpoints b[data-method="PATCH"] {
+  background: #ff6d3f;
+  color: white;
+}
+.ood-endpoints code {
+  overflow: hidden;
+  font: 8px var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ood-endpoints small {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
+.ood-patterns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ood-patterns b {
+  padding: 10px 12px;
+  border: 1px solid #16131b;
+  background: #16131b;
+  color: white;
+  font: 8px var(--mono);
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.25s ease,
+    color 0.25s ease;
+}
+.ood-patterns b:hover {
+  transform: translateY(-4px) rotate(-1deg);
+  background: transparent;
+  color: var(--ink);
+}
+.ood-api-console header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.ood-api-console header h2 {
+  color: white;
+}
+.ood-api-console header i {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
+  border: 1px solid #ffffff24;
+  color: var(--lime);
+  font: 7px var(--mono);
+  font-style: normal;
+}
+.ood-api-console header i::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lime);
+  content: "";
+}
+.ood-request-line {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #ffffff18;
+  background: #ffffff08;
+}
+.ood-request-line code {
+  overflow: hidden;
+  color: #d8d0e4;
+  font: 8px var(--mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ood-request-line button {
+  border: 0;
+  background: var(--lime);
+  color: var(--ink);
+  padding: 11px 13px;
+  font: 7px var(--mono);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.ood-request-line button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--purple);
+}
+.ood-api-console pre {
+  min-height: 154px;
+  margin: 10px 0 0;
+  padding: 18px;
+  overflow: auto;
+  border: 1px solid #ffffff12;
+  background: #0d0c0f;
+  color: #bffdc8;
+  font: 9px/1.75 var(--mono);
+  scrollbar-width: none;
+}
+.ood-api-console pre::-webkit-scrollbar {
+  display: none;
+}
+.ood-source-note a {
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .ood-blueprint {
+    display: block;
+  }
+  .ood-panel {
+    min-height: 0;
+    margin-bottom: 10px;
+  }
+  .ood-endpoints > div {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .ood-endpoints small {
+    grid-column: 2;
+  }
+  .ood-request-line {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .ood-request-line button {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ood-patterns b,
+  .ood-request-line button {
+    transition: none;
+  }
+}

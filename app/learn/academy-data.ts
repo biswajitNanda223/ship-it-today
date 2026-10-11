@@ -2,7 +2,7 @@ export type DiagramKind = "flow" | "class" | "sequence" | "data" | "state";
 
 export type Lesson = {
   slug: string;
-  track: "HLD" | "LLD" | "API" | "DIAGRAM" | "DDIA";
+  track: "HLD" | "LLD" | "API" | "DIAGRAM" | "DDIA" | "OOD";
   index: string;
   title: string;
   subtitle: string;
@@ -11,6 +11,9 @@ export type Lesson = {
   duration: string;
   diagram: DiagramKind;
   nodes: Array<{ name: string; detail: string }>;
+  patterns?: string[];
+  requirements?: string[];
+  endpoints?: Array<{ method: string; path: string; purpose: string }>;
   steps: Array<{
     title: string;
     summary: string;

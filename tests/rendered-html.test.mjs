@@ -57,3 +57,15 @@ test("server-renders bounded latency markers", async () => {
   assert.match(html, /ms p95/);
   assert.doesNotMatch(html, /class="chart-dot"/);
 });
+
+test("server-renders the Python FastAPI OOD lab", async () => {
+  const response = await render("/learn/ood/parking-lot");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /Design a parking lot/);
+  assert.match(html, /FASTAPI SURFACE/);
+  assert.match(html, /Strategy/);
+  assert.match(html, /LIVE CONTRACT SIMULATOR/);
+  assert.match(html, /class="ood-blueprint/);
+});

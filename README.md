@@ -7,7 +7,8 @@ An animated, interactive engineering world for learning high-level design, low-l
 - Interactive capacity lab with live traffic, replica, cache, utilization, and p95-latency predictions
 - REST, GraphQL, and WebSocket API dojo with animated request flow
 - GenAI backend studio covering AI gateways, RAG, streaming, tool execution, semantic caching, fallbacks, safety, evaluation, and cost controls
-- A 38-page visual academy with separate HLD case studies, LLD exercises, UML/DFD/ERD lessons, REST API deep dives, and Netflix/Tinder/Zomato designs
+- A 49-page visual academy with separate HLD case studies, LLD exercises, Python OOD interviews, UML/DFD/ERD lessons, REST API deep dives, and Netflix/Tinder/Zomato designs
+- Eleven original Python + FastAPI OOD labs covering requirements, invariants, class responsibilities, patterns, endpoints, and concurrency tests
 - A 69-endpoint public API world covering public data, auth, ecommerce, todos, social, media uploads, and kitchen-sink HTTP behavior
 - Twelve original data-intensive systems chapters covering storage engines, replication, partitioning, transactions, consensus, batch, and streams
 - Seven dedicated REST method playgrounds for GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS
@@ -77,6 +78,12 @@ curl -X POST http://localhost:4000/api/v1/public-lab/execute \
   -d '{"method":"POST","path":"/api/v1/todos","body":{"title":"Ship it"}}'
 curl -X POST http://localhost:4000/api/v1/public-lab/images \
   -F "image=@./example.png"
+
+# FastAPI OOD lab (when apps/fastapi is running on port 8000)
+curl http://localhost:8000/api/v1/ood/scenarios
+curl -X POST http://localhost:8000/api/v1/ood/scenarios/parking-lot/commands \
+  -H "content-type: application/json" \
+  -d '{"command":"enter","payload":{"vehicle_id":"car-42"},"idempotency_key":"entry-000042"}'
 ```
 
 ## Repository structure

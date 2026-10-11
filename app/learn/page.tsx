@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LearnNav } from "./LearnNav";
 import { apiLessons, diagramLessons, hldLessons, lldLessons } from "./academy-data";
 import { ddiaLessons } from "./ddia-data";
+import { oodLessons } from "./ood/ood-data";
 
 const academyTracks = [
   {
@@ -22,22 +23,30 @@ const academyTracks = [
   },
   {
     code: "03",
-    title: "Diagram studio",
-    href: "/learn/diagrams",
-    copy: "Class, sequence, DFD, ERD, and state diagrams.",
-    lessons: diagramLessons,
+    title: "OOD interview lab",
+    href: "/learn/ood",
+    copy: "Eleven original object-design cases implemented with Python and FastAPI.",
+    lessons: oodLessons,
     color: "orange",
   },
   {
     code: "04",
-    title: "REST API engineering",
-    href: "/learn/apis",
-    copy: "Every method, security, performance, webhooks, and testing.",
-    lessons: apiLessons,
+    title: "Diagram studio",
+    href: "/learn/diagrams",
+    copy: "Class, sequence, DFD, ERD, and state diagrams.",
+    lessons: diagramLessons,
     color: "pink",
   },
   {
     code: "05",
+    title: "REST API engineering",
+    href: "/learn/apis",
+    copy: "Every method, security, performance, webhooks, and testing.",
+    lessons: apiLessons,
+    color: "cyan",
+  },
+  {
+    code: "06",
     title: "Data-intensive systems",
     href: "/learn/ddia",
     copy: "Twelve visual chapters on storage, replication, transactions, streams, and consensus.",

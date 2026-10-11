@@ -16,7 +16,9 @@ function ArchitectureDiagram({ lesson }: { lesson: Lesson }) {
 export function LessonExperience({ lesson, siblings }: { lesson: Lesson; siblings: Lesson[] }) {
   const [chapter, setChapter] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [oodRuns, setOodRuns] = useState(0);
   const active = lesson.steps[chapter];
+  const demoEndpoint = lesson.endpoints?.[0];
   const currentIndex = siblings.findIndex((item) => item.slug === lesson.slug);
   const previous = siblings[currentIndex - 1];
   const next = siblings[currentIndex + 1];
@@ -96,6 +98,74 @@ export function LessonExperience({ lesson, siblings }: { lesson: Lesson; sibling
         </div>
         <ArchitectureDiagram lesson={lesson} />
       </section>
+
+      {lesson.track === "OOD" && demoEndpoint && (
+        <section className="ood-blueprint shell" aria-label="Object design blueprint">
+          <article className="ood-panel ood-requirements">
+            <span>01 / BEHAVIOR</span>
+            <h2>Define the contract before the classes.</h2>
+            <ul>
+              {lesson.requirements?.map((requirement) => (
+                <li key={requirement}>{requirement}</li>
+              ))}
+            </ul>
+          </article>
+
+          <article className="ood-panel ood-contracts">
+            <span>02 / FASTAPI SURFACE</span>
+            <h2>Thin routes. Explicit commands.</h2>
+            <div className="ood-endpoints">
+              {lesson.endpoints?.map((endpoint) => (
+                <div key={`${endpoint.method}-${endpoint.path}`}>
+                  <b data-method={endpoint.method}>{endpoint.method}</b>
+                  <code>{endpoint.path}</code>
+                  <small>{endpoint.purpose}</small>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="ood-panel ood-pattern-panel">
+            <span>03 / DESIGN TOOLS</span>
+            <h2>Patterns with a reason to exist.</h2>
+            <div className="ood-patterns">
+              {lesson.patterns?.map((pattern) => (
+                <b key={pattern}>{pattern}</b>
+              ))}
+            </div>
+          </article>
+
+          <article className="ood-panel ood-api-console">
+            <header>
+              <div>
+                <span>LIVE CONTRACT SIMULATOR</span>
+                <h2>Send one FastAPI command.</h2>
+              </div>
+              <i>READY</i>
+            </header>
+            <div className="ood-request-line">
+              <b>{demoEndpoint.method}</b>
+              <code>{demoEndpoint.path}</code>
+              <button type="button" onClick={() => setOodRuns((runs) => runs + 1)}>
+                Run request <span>→</span>
+              </button>
+            </div>
+            <pre aria-live="polite">
+              {JSON.stringify(
+                {
+                  status: oodRuns ? "accepted" : "ready",
+                  framework: "FastAPI",
+                  scenario: lesson.slug,
+                  route: `${demoEndpoint.method} ${demoEndpoint.path}`,
+                  trace_id: oodRuns ? `ood_${String(oodRuns).padStart(4, "0")}` : null,
+                },
+                null,
+                2,
+              )}
+            </pre>
+          </article>
+        </section>
+      )}
 
       <section className="lesson-body shell">
         <aside className="chapter-nav">

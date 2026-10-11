@@ -31,6 +31,82 @@ class InferenceRequest(BaseModel):
     max_tokens: int = Field(default=512, ge=16, le=4096)
 
 
+class OodCommandRequest(BaseModel):
+    command: str = Field(min_length=1, max_length=80)
+    payload: dict[str, Any] = Field(default_factory=dict)
+    idempotency_key: str = Field(min_length=8, max_length=120)
+
+
+OOD_SCENARIOS: dict[str, dict[str, Any]] = {
+    "parking-lot": {
+        "title": "Parking lot",
+        "entities": ["ParkingLot", "ParkingFloor", "ParkingSpot", "ParkingTicket"],
+        "patterns": ["Strategy", "Factory Method", "Repository", "State"],
+        "commands": ["enter", "exit"],
+    },
+    "elevator-system": {
+        "title": "Elevator system",
+        "entities": ["ElevatorController", "ElevatorCar", "Request", "Scheduler"],
+        "patterns": ["Strategy", "State", "Command", "Observer"],
+        "commands": ["request_car", "choose_floor"],
+    },
+    "atm": {
+        "title": "ATM",
+        "entities": ["ATM", "CardSession", "CashDispenser", "Withdrawal"],
+        "patterns": ["State", "Adapter", "Chain of Responsibility", "Saga"],
+        "commands": ["start_session", "withdraw"],
+    },
+    "vending-machine": {
+        "title": "Vending machine",
+        "entities": ["VendingMachine", "ProductSlot", "Payment", "ChangeMaker"],
+        "patterns": ["State", "Strategy", "Command", "Adapter"],
+        "commands": ["select", "pay", "dispense"],
+    },
+    "movie-ticket": {
+        "title": "Movie ticket booking",
+        "entities": ["Show", "Seat", "SeatHold", "Booking"],
+        "patterns": ["State", "Repository", "Saga", "Outbox"],
+        "commands": ["hold_seats", "confirm_booking"],
+    },
+    "restaurant": {
+        "title": "Restaurant system",
+        "entities": ["Restaurant", "Table", "Reservation", "Order"],
+        "patterns": ["State", "Observer", "Repository", "Strategy"],
+        "commands": ["reserve", "open_order", "update_items"],
+    },
+    "shipping-locker": {
+        "title": "Shipping locker",
+        "entities": ["LockerBank", "Compartment", "Package", "PickupCredential"],
+        "patterns": ["Strategy", "State", "Adapter", "Repository"],
+        "commands": ["deliver", "pickup"],
+    },
+    "grocery-store": {
+        "title": "Grocery checkout",
+        "entities": ["Product", "InventoryItem", "Cart", "Checkout"],
+        "patterns": ["Strategy", "Specification", "Composite", "Repository"],
+        "commands": ["start_cart", "add_item", "checkout"],
+    },
+    "file-search": {
+        "title": "File search",
+        "entities": ["SearchQuery", "Specification", "FileIndex", "Cursor"],
+        "patterns": ["Specification", "Composite", "Iterator", "Strategy"],
+        "commands": ["search", "reindex"],
+    },
+    "tic-tac-toe": {
+        "title": "Tic-tac-toe",
+        "entities": ["Game", "Board", "Move", "WinRule"],
+        "patterns": ["State", "Strategy", "Factory Method", "Memento"],
+        "commands": ["create_game", "move"],
+    },
+    "blackjack": {
+        "title": "Blackjack",
+        "entities": ["BlackjackGame", "Shoe", "Hand", "DealerPolicy"],
+        "patterns": ["State", "Strategy", "Factory Method", "Observer"],
+        "commands": ["start_game", "act"],
+    },
+}
+
+
 jobs: dict[str, dict[str, Any]] = {}
 
 
@@ -57,6 +133,61 @@ async def upload_image(image: UploadFile = File(...)) -> dict[str, Any]:
     if len(content) > 5_000_000:
         raise HTTPException(status_code=413, detail="Image exceeds 5 MB")
     return {"success": True, "message": "Image accepted", "data": {"filename": image.filename, "mimetype": image.content_type, "size": len(content)}}
+
+
+@app.get("/api/v1/ood/scenarios")
+async def list_ood_scenarios() -> dict[str, Any]:
+    return {
+        "data": [
+            {"slug": slug, **scenario}
+            for slug, scenario in OOD_SCENARIOS.items()
+        ],
+        "meta": {"framework": "fastapi", "count": len(OOD_SCENARIOS)},
+    }
+
+
+@app.get("/api/v1/ood/scenarios/{slug}")
+async def get_ood_scenario(slug: str) -> dict[str, Any]:
+    scenario = OOD_SCENARIOS.get(slug)
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="OOD scenario not found")
+    return {"data": {"slug": slug, **scenario}}
+
+
+@app.post(
+    "/api/v1/ood/scenarios/{slug}/commands",
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def execute_ood_command(
+    slug: str,
+    command: OodCommandRequest,
+) -> dict[str, Any]:
+    scenario = OOD_SCENARIOS.get(slug)
+    if scenario is None:
+        raise HTTPException(status_code=404, detail="OOD scenario not found")
+    if command.command not in scenario["commands"]:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Unsupported command. Choose one of: {', '.join(scenario['commands'])}",
+        )
+
+    trace_id = f"ood_{uuid4().hex[:10]}"
+    return {
+        "data": {
+            "status": "accepted",
+            "scenario": slug,
+            "command": command.command,
+            "payload": command.payload,
+            "idempotencyKey": command.idempotency_key,
+            "traceId": trace_id,
+        },
+        "trace": [
+            {"stage": "http", "component": "FastAPI router", "status": "validated"},
+            {"stage": "application", "component": "command handler", "status": "accepted"},
+            {"stage": "domain", "component": scenario["entities"][0], "status": "evaluated"},
+            {"stage": "persistence", "component": "repository port", "status": "simulated"},
+        ],
+    }
 
 
 @app.post("/api/v1/ai/inference")
