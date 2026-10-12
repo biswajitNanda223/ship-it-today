@@ -33,7 +33,7 @@ export function MotionLayer() {
           );
           if (cards.length) {
             animate(
-              cards,
+              [...cards].slice(0, 8),
               {
                 opacity: [0.84, 1],
                 transform: [
@@ -41,7 +41,7 @@ export function MotionLayer() {
                   "translateY(0px) rotate(0deg) scale(1)",
                 ],
               },
-              { duration: 0.58, delay: stagger(0.055), ease: [0.16, 1, 0.3, 1] },
+              { duration: 0.52, delay: stagger(0.04), ease: [0.16, 1, 0.3, 1] },
             );
           }
         },
@@ -79,8 +79,11 @@ export function MotionLayer() {
     addEventListener("scroll", onScroll, { passive: true });
 
     const finePointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
+    let lastPointerUpdate = 0;
     const onPointerMove = (event: PointerEvent) => {
       if (!finePointer || reducedMotion) return;
+      if (event.timeStamp - lastPointerUpdate < 42) return;
+      lastPointerUpdate = event.timeStamp;
       cancelAnimationFrame(pointerRaf.current);
       pointerRaf.current = requestAnimationFrame(() => {
         document.documentElement.style.setProperty("--pointer-x", `${event.clientX}px`);

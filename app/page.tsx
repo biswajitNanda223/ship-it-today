@@ -10,6 +10,11 @@ const ReactBitsHyperspeed = dynamic(
   { ssr: false },
 );
 
+const FuturisticSystemCore = dynamic(
+  () => import("./components/FuturisticSystemCore").then((module) => module.FuturisticSystemCore),
+  { ssr: false },
+);
+
 const tracks = [
   {
     id: "hld",
@@ -426,6 +431,7 @@ export default function Home() {
           <b>airbnb</b>
           <b>amazon</b>
         </div>
+        <FuturisticSystemCore />
       </section>
 
       <section className="section shell" id="learn">

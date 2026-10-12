@@ -35,7 +35,8 @@ export function ReactBitsHyperspeed({ className = "", speed = 24, boost = 2.4 }:
       antialias: false,
       powerPreference: "high-performance",
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.7));
+    const compactDevice = window.matchMedia("(max-width: 720px)").matches;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, compactDevice ? 1 : 1.25));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
 
@@ -55,7 +56,7 @@ export function ReactBitsHyperspeed({ className = "", speed = 24, boost = 2.4 }:
     median.position.set(0, -0.16, -96);
     scene.add(median);
 
-    const streakCount = 170;
+    const streakCount = compactDevice ? 58 : 96;
     const geometry = new THREE.BoxGeometry(0.055, 0.045, 1);
     const material = new THREE.MeshBasicMaterial({
       color: "#ffffff",
@@ -97,6 +98,8 @@ export function ReactBitsHyperspeed({ className = "", speed = 24, boost = 2.4 }:
     let boosted = false;
     let currentSpeed = speed;
     let previous = performance.now();
+    let lastFrame = 0;
+    let visible = true;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const resize = () => {
@@ -120,6 +123,8 @@ export function ReactBitsHyperspeed({ className = "", speed = 24, boost = 2.4 }:
     resize();
 
     const render = (now: number) => {
+      if (!visible || document.hidden || now - lastFrame < 30) return;
+      lastFrame = now;
       const delta = Math.min((now - previous) / 1000, 0.05);
       previous = now;
       const targetSpeed = boosted ? speed * boost : speed;
@@ -149,9 +154,19 @@ export function ReactBitsHyperspeed({ className = "", speed = 24, boost = 2.4 }:
       renderer.setAnimationLoop(render);
     }
 
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        previous = performance.now();
+      },
+      { rootMargin: "120px" },
+    );
+    visibilityObserver.observe(container);
+
     return () => {
       renderer.setAnimationLoop(null);
       resizeObserver.disconnect();
+      visibilityObserver.disconnect();
       container.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
       scene.traverse((object) => {

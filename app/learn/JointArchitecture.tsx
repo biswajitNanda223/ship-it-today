@@ -57,8 +57,9 @@ export function JointArchitecture({
         const rowGap = compact ? 54 : 76;
         const usableHeight = Math.max(430, 58 + rows * (nodeHeight + rowGap));
         host.current.style.height = `${usableHeight}px`;
-        if (host.current.parentElement) {
-          host.current.parentElement.style.height = `${usableHeight}px`;
+        const stage = host.current.closest<HTMLElement>(".joint-stage");
+        if (stage) {
+          stage.style.setProperty("--joint-height", `${usableHeight}px`);
         }
 
         paper = new joint.dia.Paper({
@@ -158,7 +159,7 @@ export function JointArchitecture({
       disposed = true;
       observer?.disconnect();
       paper?.remove();
-      if (hostElement?.parentElement) hostElement.parentElement.style.height = "";
+      hostElement?.closest<HTMLElement>(".joint-stage")?.style.removeProperty("--joint-height");
       graphRef.current = null;
       cellsRef.current = [];
     };
@@ -185,7 +186,9 @@ export function JointArchitecture({
 
   return (
     <div className={`joint-stage joint-${visualTheme}`}>
-      <div ref={host} className="joint-paper" aria-hidden="true" />
+      <div className="joint-scroll" role="region" aria-label="Scrollable architecture diagram">
+        <div ref={host} className="joint-paper" aria-hidden="true" />
+      </div>
       <ol className="sr-diagram">
         {nodes.map((node) => (
           <li key={node.name}>
