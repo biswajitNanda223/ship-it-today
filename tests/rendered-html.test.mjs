@@ -72,3 +72,15 @@ test("server-renders the Python FastAPI OOD lab", async () => {
   assert.match(html, /LIVE CONTRACT SIMULATOR/);
   assert.match(html, /class="ood-blueprint/);
 });
+
+test("server-renders the modern alert API lesson", async () => {
+  const response = await render("/learn/apis/notifications");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /MODERN ALERT API/);
+  assert.match(html, /POST \/v1\/alerts/);
+  assert.match(html, /Delivery pipeline/);
+  assert.match(html, /FASTAPI IMPLEMENTATION/);
+  assert.match(html, /PRODUCTION FLOW/);
+});

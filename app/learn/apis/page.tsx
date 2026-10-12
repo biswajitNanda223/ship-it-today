@@ -106,6 +106,19 @@ export default function ApiPage() {
           ))}
         </div>
       </header>
+      <section className="alert-api-feature shell">
+        <div>
+          <span>NEW · PRODUCTION API BLUEPRINT</span>
+          <h2>Build a modern alert notification API.</h2>
+          <p>
+            Run an interactive alert lifecycle, inspect the REST contract, and learn idempotency,
+            deduplication, asynchronous delivery, SSE updates, retries, and FastAPI implementation.
+          </p>
+        </div>
+        <Link href="/learn/apis/notifications">
+          Open alert API lab <span>→</span>
+        </Link>
+      </section>
       <section className="api-course-links shell">
         <span className="kicker">PAGE-BY-PAGE REST COURSE</span>
         <h2>Go from HTTP basics to production operations.</h2>
