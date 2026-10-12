@@ -360,6 +360,11 @@ export default function Home() {
             <span className="play">▶</span> Try the playground
           </a>
         </div>
+        <div className="hero-release-label">
+          <span>NEW</span>
+          INTERACTIVE 3D SYSTEM CORE
+        </div>
+        <FuturisticSystemCore />
         <div className="world" aria-label="Animated system architecture preview">
           <ReactBitsHyperspeed />
           <div className="hyperspeed-caption">HOLD TO ACCELERATE · REACT BITS HYPERSPEED</div>
@@ -431,7 +436,6 @@ export default function Home() {
           <b>airbnb</b>
           <b>amazon</b>
         </div>
-        <FuturisticSystemCore />
       </section>
 
       <section className="section shell" id="learn">
