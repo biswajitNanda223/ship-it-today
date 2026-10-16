@@ -4514,11 +4514,14 @@ footer > span {
   z-index: 100;
   left: 0;
   top: 0;
-  width: var(--scroll-progress, 0);
+  width: 100%;
   height: 3px;
   background: linear-gradient(90deg, var(--purple), #aa86ff, var(--lime));
   box-shadow: 0 0 12px #8b65ff;
   pointer-events: none;
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: left center;
+  will-change: transform;
 }
 .ambient-orb {
   position: fixed;
@@ -4547,15 +4550,14 @@ footer > span {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: color-mix(in srgb, var(--paper) 88%, transparent);
-  backdrop-filter: blur(18px);
+  background: color-mix(in srgb, var(--paper) 97%, white);
   padding-left: max(0px, calc((100vw - 1180px) / 2));
   padding-right: max(0px, calc((100vw - 1180px) / 2));
   width: 100%;
   max-width: none;
 }
 .dark-course .learn-nav {
-  background: #15121be8;
+  background: #15121b;
 }
 .button,
 .nav-cta,
@@ -8894,13 +8896,7 @@ body {
   pointer-events: none;
   opacity: 0.34;
   background: radial-gradient(circle, #7b55ef18 0, #7b55ef08 34%, transparent 70%);
-  transform: translate3d(
-    calc(var(--pointer-x, 50vw) - 210px),
-    calc(var(--pointer-y, 30vh) - 210px),
-    0
-  );
-  transition: transform 90ms linear;
-  will-change: transform;
+  transform: translate3d(calc(50vw - 210px), calc(30vh - 210px), 0);
 }
 .dark-course .motion-spotlight,
 .trading-lab ~ .motion-spotlight {
@@ -9489,17 +9485,16 @@ body {
     0 40px 0 -10px var(--ink);
   opacity: 0.15;
   clip-path: polygon(0 31%, 94% 0, 100% 67%, 7% 100%);
-  will-change: transform;
 }
 .slash-one {
   right: -80px;
   top: 18vh;
-  transform: translate3d(0, calc(var(--scroll-drift, 0px) * 0.35), 0) rotate(-18deg);
+  transform: rotate(-18deg);
 }
 .slash-two {
   bottom: 12vh;
   left: -96px;
-  transform: translate3d(0, calc(var(--scroll-drift, 0px) * -0.3), 0) rotate(14deg);
+  transform: rotate(14deg);
 }
 .graffiti-tag {
   position: absolute;
@@ -9511,17 +9506,16 @@ body {
   text-transform: uppercase;
   white-space: nowrap;
   writing-mode: vertical-rl;
-  will-change: transform;
 }
 .tag-build {
   top: 18%;
   left: 5px;
-  transform: translate3d(0, calc(var(--graffiti-drift, 0px) * -0.18), 0) rotate(180deg);
+  transform: rotate(180deg);
 }
 .tag-ship {
   right: 5px;
   bottom: 4%;
-  transform: translate3d(0, calc(var(--graffiti-drift, 0px) * 0.12), 0);
+  transform: none;
 }
 .graffiti-world .scroll-progress {
   height: 7px;
@@ -9538,7 +9532,7 @@ body {
     #cfff4529 53%,
     transparent 78%
   );
-  transform: translate3d(0, calc(var(--scroll-y, 0px) * 0.035), 0) skewY(-4deg);
+  transform: skewY(-4deg);
 }
 .graffiti-world .motion-spotlight {
   width: 360px;
