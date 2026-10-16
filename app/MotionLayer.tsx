@@ -12,11 +12,14 @@ export function MotionLayer() {
       ),
     ];
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const revealed = new WeakSet<Element>();
     const stopInView = targets.map((element, sectionIndex) => {
       if (reducedMotion) return () => undefined;
       return inView(
         element,
         () => {
+          if (revealed.has(element)) return;
+          revealed.add(element);
           animate(
             element,
             {
@@ -56,24 +59,45 @@ export function MotionLayer() {
         { duration: 0.5, delay: stagger(0.055), ease: [0.22, 1, 0.36, 1] },
       );
     }
-    let previous = scrollY;
+    let targetScroll = scrollY;
+    let smoothScroll = scrollY;
+    let previousSmooth = scrollY;
+    let frameActive = false;
+    const paintScroll = () => {
+      smoothScroll += (targetScroll - smoothScroll) * 0.16;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      const drift = Math.max(-14, Math.min(14, smoothScroll - previousSmooth));
+      document.documentElement.style.setProperty(
+        "--scroll-progress",
+        `${max ? (targetScroll / max) * 100 : 0}%`,
+      );
+      document.documentElement.style.setProperty("--scroll-y", `${smoothScroll.toFixed(2)}px`);
+      document.documentElement.style.setProperty("--scroll-drift", `${drift.toFixed(2)}px`);
+      document.documentElement.style.setProperty(
+        "--graffiti-drift",
+        `${(smoothScroll * 0.075) % 720}px`,
+      );
+      previousSmooth = smoothScroll;
+      if (Math.abs(targetScroll - smoothScroll) > 0.1) {
+        raf.current = requestAnimationFrame(paintScroll);
+      } else {
+        smoothScroll = targetScroll;
+        frameActive = false;
+      }
+    };
     const onScroll = () => {
-      cancelAnimationFrame(raf.current);
-      raf.current = requestAnimationFrame(() => {
+      targetScroll = scrollY;
+      if (reducedMotion) {
         const max = document.documentElement.scrollHeight - innerHeight;
-        const delta = Math.max(-24, Math.min(24, scrollY - previous));
         document.documentElement.style.setProperty(
           "--scroll-progress",
-          `${max ? (scrollY / max) * 100 : 0}%`,
+          `${max ? (targetScroll / max) * 100 : 0}%`,
         );
-        document.documentElement.style.setProperty("--scroll-y", `${scrollY}px`);
-        document.documentElement.style.setProperty("--scroll-drift", `${delta}px`);
-        document.documentElement.style.setProperty(
-          "--graffiti-drift",
-          `${(scrollY * 0.075) % 720}px`,
-        );
-        previous = scrollY;
-      });
+        return;
+      }
+      if (frameActive) return;
+      frameActive = true;
+      raf.current = requestAnimationFrame(paintScroll);
     };
     onScroll();
     addEventListener("scroll", onScroll, { passive: true });

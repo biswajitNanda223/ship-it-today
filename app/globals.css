@@ -8420,15 +8420,17 @@ body {
 }
 .ai-transport-tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 1px;
   border: 1px solid #ffffff18;
-  background: #191520;
+  background: #312a39;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
 }
 .ai-transport-tabs button {
   min-height: 74px;
   border: 0;
-  border-right: 1px solid #ffffff16;
-  background: transparent;
+  background: #191520;
   color: #918a98;
   text-align: left;
   padding: 14px 17px;
@@ -8440,9 +8442,9 @@ body {
   border-right: 0;
 }
 .ai-transport-tabs button.active {
-  background: #251d36;
+  background: linear-gradient(145deg, #2d2142, #21192f);
   color: white;
-  box-shadow: inset 0 -3px var(--lime);
+  box-shadow: inset 0 -3px var(--lime), inset 0 0 28px #7445ff18;
 }
 .ai-transport-tabs span {
   font: 9px var(--mono);

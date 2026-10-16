@@ -53,6 +53,19 @@ test("GenAI background jobs return a status resource", async () => {
   await app.close();
 });
 
+test("proximity search filters and ranks vector matches", async () => {
+  const app = buildApp();
+  const response = await app.inject({
+    method: "POST",
+    url: "/api/v1/ai/search/proximity",
+    payload: { query: "background work", limit: 2, maxDistance: 0.2 },
+  });
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.json().data.matches.length, 2);
+  assert.ok(response.json().data.matches[0].score > response.json().data.matches[1].score);
+  await app.close();
+});
+
 test("public API lab executes a typed request simulation", async () => {
   const app = buildApp();
   const response = await app.inject({

@@ -4,7 +4,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FlowTopology } from "../../components/FlowTopology";
 import { LearnNav } from "../LearnNav";
 
-type Transport = "rest" | "sse" | "websocket" | "job";
+type Transport =
+  | "rest"
+  | "sse"
+  | "jobSse"
+  | "multipageSse"
+  | "proximity"
+  | "websocket"
+  | "job";
 
 const layers = [
   {
@@ -83,6 +90,79 @@ for await (const event of parseSse(response.body)) {
       "tool.result",
       "content.delta",
       "response.completed",
+    ],
+  },
+  jobSse: {
+    label: "JOB + SSE",
+    route: "GET /api/v1/ai/jobs/{id}/events",
+    contract: "202 job + event stream",
+    use: "Queue durable work, then stream progress without polling.",
+    code: `const created = await fetch("/api/v1/ai/jobs", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ prompt }),
+}).then((response) => response.json());
+
+const events = new EventSource(
+  \`/api/v1/ai/jobs/\${created.data.id}/events\`,
+);
+events.addEventListener("job.progress", updateProgress);
+events.addEventListener("job.completed", () => events.close());`,
+    events: [
+      "job.connected",
+      "job.queued",
+      "job.running",
+      "job.progress",
+      "job.completed",
+    ],
+  },
+  multipageSse: {
+    label: "MULTIPAGE SSE",
+    route: "POST /api/v1/ai/documents/stream",
+    contract: "page-scoped SSE events",
+    use: "Process long documents page by page with ordered progress and partial results.",
+    code: `const response = await fetch("/api/v1/ai/documents/stream", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ documentId, pages: [1, 2, 3, 4] }),
+});
+
+for await (const event of parseSse(response.body)) {
+  if (event.type === "page.completed") renderPage(event);
+  if (event.type === "document.completed") finalize(event);
+}`,
+    events: [
+      "document.started",
+      "page.started",
+      "page.completed",
+      "page.started",
+      "page.completed",
+      "document.completed",
+    ],
+  },
+  proximity: {
+    label: "PROXIMITY SEARCH",
+    route: "POST /api/v1/ai/search/proximity",
+    contract: "ranked JSON results",
+    use: "Find nearby vector matches, then filter by score and metadata.",
+    code: `const response = await fetch("/api/v1/ai/search/proximity", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({
+    query: "durable background processing",
+    limit: 5,
+    maxDistance: 0.32,
+  }),
+});
+
+const { data } = await response.json();
+renderMatches(data.matches);`,
+    events: [
+      "query.embedded",
+      "index.searched",
+      "distance.filtered",
+      "metadata.filtered",
+      "results.ranked",
     ],
   },
   websocket: {
@@ -202,6 +282,7 @@ export default function GenAiPage() {
           <span>SSE</span>
           <span>WEBSOCKET</span>
           <span>ASYNC JOBS</span>
+          <span>VECTOR SEARCH</span>
         </div>
       </header>
 
