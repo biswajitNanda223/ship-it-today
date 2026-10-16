@@ -12,6 +12,7 @@ const links = [
   ["Diagrams", "/learn/diagrams"],
   ["Data", "/learn/ddia"],
   ["GenAI", "/learn/genai"],
+  ["RustGIS", "/learn/rustgis"],
 ] as const;
 
 export function LearnNav() {

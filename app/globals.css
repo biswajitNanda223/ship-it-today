@@ -1246,6 +1246,66 @@ footer > span {
   }
 }
 
+/* RustGIS live spatial lab */
+.rustgis-page { min-height: 100vh; background: #f3f0e8; }
+.rustgis-hero { display: grid; grid-template-columns: 1.35fr .65fr; gap: 55px; align-items: end; padding-block: 78px 55px; }
+.rustgis-hero h1 { margin: 14px 0 22px; font-size: clamp(52px, 7vw, 92px); line-height: .9; letter-spacing: -.07em; }
+.rustgis-hero h1 em { color: var(--purple); font-family: Georgia, serif; font-weight: 400; }
+.rustgis-hero p { max-width: 660px; color: var(--muted); font: 17px/1.65 Georgia, serif; }
+.rustgis-stack { display: grid; gap: 12px; padding: 24px; border: 1px solid var(--ink); background: var(--lime); box-shadow: 9px 9px 0 var(--purple); transform: rotate(1deg); }
+.rustgis-stack b { font: 800 10px var(--mono); letter-spacing: .14em; }
+.rustgis-stack span { font-size: 13px; line-height: 1.5; }
+.rustgis-stack code { padding-top: 12px; border-top: 1px solid #17151d55; font-size: 12px; }
+.rustgis-lab { display: grid; grid-template-columns: 250px minmax(0, 1fr) 285px; min-height: 610px; margin-bottom: 70px; border: 1px solid #36313c; background: #151219; color: white; box-shadow: 0 30px 70px #21133328; }
+.rustgis-controls, .rustgis-results { min-width: 0; padding: 24px; }
+.rustgis-controls { border-right: 1px solid #36313c; }
+.rustgis-controls > span, .rustgis-results header span { color: var(--lime); font: 800 9px var(--mono); letter-spacing: .14em; }
+.rustgis-controls label { display: grid; gap: 15px; margin-block: 28px; color: #a59dac; font-size: 11px; }
+.rustgis-controls label b { justify-self: end; margin-top: -27px; color: white; font-family: var(--mono); }
+.rustgis-categories { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.rustgis-categories button { display: flex; gap: 8px; align-items: center; padding: 10px 8px; border: 1px solid #45404b; background: transparent; color: #88818e; font-size: 9px; text-transform: uppercase; cursor: pointer; }
+.rustgis-categories button i { width: 7px; height: 7px; border-radius: 50%; background: #5c5660; }
+.rustgis-categories button.active { border-color: var(--category); color: white; background: color-mix(in srgb, var(--category) 12%, transparent); }
+.rustgis-categories button.active i { background: var(--category); box-shadow: 0 0 8px var(--category); }
+.rustgis-coordinates { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; margin-top: 24px; padding: 15px; background: #0e0c11; }
+.rustgis-coordinates small { color: #716b76; font: 7px var(--mono); }
+.rustgis-coordinates code { justify-self: end; color: #d6d0da; font-size: 9px; }
+.rustgis-run { width: 100%; margin-top: 18px; padding: 13px; border: 0; background: var(--lime); color: var(--ink); font: 850 9px var(--mono); cursor: pointer; }
+.rustgis-run:disabled { opacity: .55; }
+.rustgis-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 16px; }
+.rustgis-meta span { color: #77717d; font-size: 7px; text-align: center; }
+.rustgis-meta b { display: block; margin-bottom: 3px; color: white; font: 10px var(--mono); }
+.rustgis-map { position: relative; min-height: 610px; overflow: hidden; cursor: crosshair; background: radial-gradient(circle at 54% 45%, #2e2343, transparent 36%), linear-gradient(135deg, #17131e, #100e14); }
+.rustgis-grid { position: absolute; inset: 0; opacity: .34; background-image: linear-gradient(#887c951e 1px, transparent 1px), linear-gradient(90deg, #887c951e 1px, transparent 1px); background-size: 34px 34px; }
+.rustgis-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rustgis-map svg path { fill: none; stroke: #6f617d; stroke-width: .5; stroke-dasharray: 1.4 1; vector-effect: non-scaling-stroke; }
+.rustgis-district { position: absolute; color: #ffffff1c; font: 800 clamp(18px, 2.5vw, 34px) var(--mono); letter-spacing: -.08em; pointer-events: none; }
+.rustgis-district.d1 { left: 7%; top: 44%; }.rustgis-district.d2 { left: 43%; top: 30%; }.rustgis-district.d3 { right: 3%; top: 39%; }.rustgis-district.d4 { left: 51%; bottom: 12%; }
+.rustgis-radius { position: absolute; border: 1px solid #c8ff3d88; border-radius: 50%; background: radial-gradient(circle, #c8ff3d05 20%, #c8ff3d18 100%); transform: translate(-50%, -50%); pointer-events: none; transition: left .35s ease, top .35s ease, width .3s ease; }
+.rustgis-origin { position: absolute; z-index: 4; transform: translate(-50%, -50%); pointer-events: none; }
+.rustgis-origin i { display: block; width: 14px; height: 14px; border: 3px solid white; border-radius: 50%; background: var(--purple); box-shadow: 0 0 0 7px #7445ff35, 0 0 25px #7445ff; }
+.rustgis-origin span { position: absolute; left: 15px; top: -14px; width: max-content; padding: 4px 6px; background: white; color: var(--ink); font: 700 7px var(--mono); }
+.rustgis-marker { position: absolute; z-index: 3; border: 0; background: none; color: white; transform: translate(-50%, -50%); cursor: pointer; animation: rustgisMarkerIn .32s var(--delay) cubic-bezier(.22,1,.36,1) both; }
+.rustgis-marker > i { display: grid; width: 24px; height: 24px; place-items: center; border: 2px solid #151219; border-radius: 50% 50% 50% 4px; background: var(--marker); color: #151219; font: 900 8px var(--mono); transform: rotate(-45deg); box-shadow: 0 4px 14px #0008; }
+.rustgis-marker > i::first-line { transform: rotate(45deg); }
+.rustgis-marker > span { display: none; position: absolute; left: 20px; top: -15px; width: max-content; padding: 7px 9px; background: #fff; color: #17151d; font-size: 9px; text-align: left; box-shadow: 0 6px 20px #0006; }
+.rustgis-marker:hover { z-index: 8; }.rustgis-marker:hover > span { display: grid; }.rustgis-marker small { color: #756e79; font-size: 7px; }
+.rustgis-map-caption { position: absolute; right: 15px; bottom: 15px; left: 15px; display: flex; gap: 8px; align-items: center; padding: 9px 12px; border: 1px solid #ffffff18; background: #0d0b10db; color: #98919e; font: 7px var(--mono); pointer-events: none; }
+.rustgis-map-caption i { width: 6px; height: 6px; border-radius: 50%; background: #54dd79; box-shadow: 0 0 8px #54dd79; }.rustgis-map-caption span { margin-left: auto; color: var(--lime); }
+.rustgis-results { border-left: 1px solid #36313c; }
+.rustgis-results header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 18px; border-bottom: 1px solid #35303a; }
+.rustgis-results header b { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 50%; background: var(--purple); font: 9px var(--mono); }
+.rustgis-results article { display: grid; grid-template-columns: 28px minmax(0,1fr) auto; gap: 11px; align-items: center; padding-block: 14px; border-bottom: 1px solid #2d2931; }
+.rustgis-results article > i { display: grid; width: 25px; height: 25px; place-items: center; border-radius: 50%; color: #151219; font: 900 8px var(--mono); }
+.rustgis-results article div { display: grid; gap: 4px; }.rustgis-results article b { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }.rustgis-results article small { color: #79727e; font: 7px var(--mono); text-transform: uppercase; }
+.rustgis-results article strong { color: var(--lime); font: 10px var(--mono); }.rustgis-error { color: #ff7584; }.rustgis-empty { color: #857e89; font-size: 11px; line-height: 1.6; }
+.rustgis-pipeline { display: grid; grid-template-columns: repeat(4, 1fr); margin-bottom: 100px; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+.rustgis-pipeline article { padding: 25px; border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }.rustgis-pipeline span { color: var(--purple); font: 800 9px var(--mono); }.rustgis-pipeline b { display: block; margin-top: 28px; }.rustgis-pipeline p { color: var(--muted); font-size: 11px; line-height: 1.55; }
+@keyframes rustgisMarkerIn { from { opacity: 0; transform: translate(-50%, calc(-50% + 10px)) scale(.7); } }
+@media (max-width: 980px) { .rustgis-hero { grid-template-columns: 1fr; }.rustgis-stack { max-width: 600px; }.rustgis-lab { grid-template-columns: 220px 1fr; }.rustgis-results { grid-column: 1 / -1; border-top: 1px solid #36313c; border-left: 0; }.rustgis-results > div { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }.rustgis-pipeline { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 680px) { .rustgis-hero { padding-top: 50px; }.rustgis-lab { grid-template-columns: 1fr; }.rustgis-controls { border-right: 0; border-bottom: 1px solid #36313c; }.rustgis-map { min-height: 520px; }.rustgis-results { grid-column: auto; }.rustgis-results > div { grid-template-columns: 1fr; }.rustgis-pipeline { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .rustgis-marker { animation: none; }.rustgis-radius { transition: none; } }
+
 /* Futuristic hero core, efficient reveals, and touch-safe diagrams */
 .future-core-reveal {
   display: block;
